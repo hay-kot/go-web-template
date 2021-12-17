@@ -24,6 +24,7 @@ This Go Web Template is a simple starter template for a Go web application. It i
 ## Template Includes
 
 - [ ] Test Coverage
+- [ ] Basic CI/CD Workflow
 - [ ] Swappable SQLite/Postgres backends
 
 ### Web API
