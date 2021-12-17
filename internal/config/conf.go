@@ -3,9 +3,10 @@ package config
 import (
 	"errors"
 	"fmt"
+	"io/ioutil"
+
 	"github.com/ardanlabs/conf/v2"
 	"github.com/ardanlabs/conf/v2/yaml"
-	"io/ioutil"
 
 	"os"
 )
@@ -28,22 +29,21 @@ func NewConfig(file string) (*Config, error) {
 
 	const prefix = "API"
 
-	var help string
-	var err error
-	if file != "" {
-		yamlData, err := ioutil.ReadFile(file)
-		if err != nil {
-			return nil, err
+	help, err := func() (string, error) {
+		if _, err := os.Stat("/path/to/whatever"); errors.Is(err, os.ErrNotExist) {
+			return conf.Parse(prefix, &cfg)
+		} else {
+			yamlData, err := ioutil.ReadFile(file)
+			if err != nil {
+				return "", err
+			}
+			return conf.Parse(prefix, &cfg, yaml.WithData(yamlData))
 		}
-		help, err = conf.Parse(prefix, &cfg, yaml.WithData(yamlData))
-	} else {
-		help, err = conf.Parse(prefix, &cfg)
-	}
+	}()
 
 	if err != nil {
 		if errors.Is(err, conf.ErrHelpWanted) {
 			fmt.Println(help)
-			// TODO: Evaluate if this should exit the program or return an error.
 			os.Exit(0)
 		}
 		return &cfg, fmt.Errorf("parsing config: %w", err)
