@@ -1,5 +1,7 @@
 # Go Web Template
 
+[![CI/CD](https://github.com/hay-kot/go-web-template/actions/workflows/go.yaml/badge.svg)](https://github.com/hay-kot/go-web-template/actions/workflows/go.yaml)
+
 This Go Web Template is a simple starter template for a Go web application. It includes a simple web server API, as well as a start CLI to manage the web server/database. It should be noted that while while use of the standard library is a high priority, this template does make use of multiple external packages. It does however abide by the standard http handler pattern.
 
 - [Go Web Template](#go-web-template)
