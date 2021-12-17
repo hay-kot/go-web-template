@@ -1,4 +1,7 @@
 
+build:
+	go build ./app/api/
+
 api:
 	go run ./app/api/
 
