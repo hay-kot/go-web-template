@@ -3,11 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/hay-kot/git-web-template/ent/user"
-	"github.com/hay-kot/git-web-template/pkgs/hasher"
-	"github.com/urfave/cli/v2"
 	"os"
 	"text/tabwriter"
+
+	"github.com/hay-kot/git-web-template/internal/repo"
+	"github.com/hay-kot/git-web-template/pkgs/hasher"
+	"github.com/urfave/cli/v2"
 )
 
 func (a *app) UserCreate(c *cli.Context) error {
@@ -26,16 +27,17 @@ func (a *app) UserCreate(c *cli.Context) error {
 		return err
 	}
 
-	usr, err := a.db.User.
-		Create().
-		SetName(name).
-		SetEmail(email).
-		SetPassword(pwHash).
-		SetIsSuperuser(isSuper).
-		Save(context.Background())
+	usr := &repo.UserCreate{
+		Name:        name,
+		Email:       email,
+		Password:    pwHash,
+		IsSuperuser: isSuper,
+	}
+
+	_, err = a.repos.Users.Create(usr, context.Background())
 
 	if err == nil {
-		fmt.Printf("Super user created: %v\n", usr.ID)
+		fmt.Println("Super user created")
 	}
 	return err
 }
@@ -55,19 +57,19 @@ func (a *app) UserDelete(c *cli.Context) error {
 		return nil
 	}
 
-	numDeleted, err := a.db.User.
-		Delete().
-		Where(user.ID(id)).Exec(context.Background())
+	err = a.repos.Users.Delete(id, context.Background())
 
 	if err == nil {
-		fmt.Printf("%v User(s) deleted (id=%v)\n", numDeleted, id)
+		fmt.Printf("%v User(s) deleted (id=%v)\n", 1, id)
 	}
 	return err
 }
 
 func (a *app) UserList(c *cli.Context) error {
 	fmt.Println("Superuser List")
-	users, err := a.db.User.Query().Where(user.IsSuperuser(true)).All(context.Background())
+
+	users, err := a.repos.Users.GetAll(context.Background())
+
 	if err != nil {
 		return err
 	}
@@ -84,7 +86,7 @@ func (a *app) UserList(c *cli.Context) error {
 	}
 
 	for _, u := range users {
-		_, _ = fmt.Fprintf(tabWriter, "%v\t%s\t%s\t%v\n", u.ID, u.Name, u.Email, u.IsSuperuser)
+		_, _ = fmt.Fprintf(tabWriter, "%v\t%s\t%s\t%v\n", u.Id, u.Name, u.Email, u.IsSuperuser)
 	}
 
 	return nil

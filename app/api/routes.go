@@ -41,12 +41,13 @@ func (s *app) newRouter(repos *repo.AllRepos) *chi.Mux {
 	})
 
 	r.Group(func(r chi.Router) {
+		r.Use(jwtauth.Verifier(s.jwt))
 		r.Use(mwAdmin)
 		r.Get(v1Base("/admin/users"), v1Handlers.HandleAdminUserGetAll())
 		r.Post(v1Base("/admin/users"), v1Handlers.HandleAdminUserCreate())
-		r.Get(v1Base("/admin/users/:id"), v1Handlers.HandleAdminUserGet())
-		r.Put(v1Base("/admin/users/:id"), v1Handlers.HandleAdminUserCreate())
-		r.Delete(v1Base("/admin/users/:id"), v1Handlers.HandleAdminUserCreate())
+		r.Get(v1Base("/admin/users/{id}"), v1Handlers.HandleAdminUserGet())
+		r.Put(v1Base("/admin/users/{id}"), v1Handlers.HandleAdminUserCreate())
+		r.Delete(v1Base("/admin/users/{id}"), v1Handlers.HandleAdminUserCreate())
 	})
 
 	return r

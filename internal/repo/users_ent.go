@@ -11,6 +11,14 @@ type EntUserRepository struct {
 	db *ent.Client
 }
 
+func (e *EntUserRepository) toUserOut(usr *UserOut, entUsr *ent.User) {
+	usr.Id = entUsr.ID
+	usr.Password = entUsr.Password
+	usr.Name = entUsr.Name
+	usr.Email = entUsr.Email
+	usr.IsSuperuser = entUsr.IsSuperuser
+}
+
 // NewEntUserRepository returns a new instance of the EntUserRepository that relies on the given *ent.Client.
 func NewUserRepositoryEnt(db *ent.Client) *EntUserRepository {
 	return &EntUserRepository{db: db}
@@ -25,7 +33,7 @@ func (e *EntUserRepository) GetOneId(id int, ctx context.Context) (UserOut, erro
 		return usrOut, err
 	}
 
-	entToUserOut(&usrOut, usr)
+	e.toUserOut(&usrOut, usr)
 
 	return usrOut, nil
 }
@@ -39,7 +47,7 @@ func (e *EntUserRepository) GetOneEmail(email string, ctx context.Context) (User
 		return usrOut, err
 	}
 
-	entToUserOut(&usrOut, usr)
+	e.toUserOut(&usrOut, usr)
 
 	return usrOut, nil
 }
@@ -54,32 +62,33 @@ func (e *EntUserRepository) GetAll(ctx context.Context) ([]UserOut, error) {
 	var usrs []UserOut
 
 	for _, usr := range users {
-		usrs = append(usrs, UserOut{
-			ID: usr.ID,
-			UserCreate: UserCreate{
-				Name:  usr.Name,
-				Email: usr.Email,
-			},
-		})
+		usrOut := UserOut{}
+		e.toUserOut(&usrOut, usr)
+		usrs = append(usrs, usrOut)
 	}
 
 	return usrs, nil
 }
 
-func (e *EntUserRepository) Create(usr *UserCreate, ctx context.Context) error {
+func (e *EntUserRepository) Create(usr *UserCreate, ctx context.Context) (UserOut, error) {
 	err := usr.Validate()
+	usrOut := UserOut{}
+
 	if err != nil {
-		return err
+		return usrOut, err
 	}
 
-	_, err = e.db.User.
+	entUser, err := e.db.User.
 		Create().
 		SetName(usr.Name).
 		SetEmail(usr.Email).
+		SetPassword(usr.Password).
 		SetIsSuperuser(usr.IsSuperuser).
 		Save(ctx)
 
-	return err
+	e.toUserOut(&usrOut, entUser)
+
+	return usrOut, err
 }
 
 func (e *EntUserRepository) Update(user *UserCreate, ctx context.Context) error {
@@ -88,6 +97,6 @@ func (e *EntUserRepository) Update(user *UserCreate, ctx context.Context) error 
 }
 
 func (e *EntUserRepository) Delete(id int, ctx context.Context) error {
-	//TODO implement me
-	panic("implement me")
+	_, err := e.db.User.Delete().Where(user.ID(id)).Exec(ctx)
+	return err
 }

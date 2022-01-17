@@ -15,3 +15,29 @@ func Decode(r *http.Request, val interface{}) error {
 	}
 	return nil
 }
+
+// GetId is a shotcut to get the id from the request URL or return a default value
+func GetParam(r *http.Request, key, d string) string {
+	val := r.URL.Query().Get(key)
+
+	if val == "" {
+		return d
+	}
+
+	return val
+}
+
+// GetSkip is a shotcut to get the skip from the request URL parameters
+func GetSkip(r *http.Request, d string) string {
+	return GetParam(r, "skip", d)
+}
+
+// GetLimit is a shotcut to get the limit from the request URL parameters
+func GetLimit(r *http.Request, d string) string {
+	return GetParam(r, "limit", d)
+}
+
+// GetQuery is a shotcut to get the sort from the request URL parameters
+func GetQuery(r *http.Request, d string) string {
+	return GetParam(r, "query", d)
+}

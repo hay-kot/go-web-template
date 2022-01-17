@@ -2,8 +2,6 @@ package repo
 
 import (
 	"errors"
-
-	"github.com/hay-kot/git-web-template/ent"
 )
 
 var (
@@ -12,8 +10,8 @@ var (
 )
 
 type UserCreate struct {
-	Name        string `json:"name"`
-	Email       string `json:"email"`
+	Name        string `json:"name,omitempty"`
+	Email       string `json:"email,omitempty"`
 	Password    string `json:"password"`
 	IsSuperuser bool   `json:"isSuperuser"`
 }
@@ -29,17 +27,9 @@ func (u *UserCreate) Validate() error {
 }
 
 type UserOut struct {
-	ID       int    `json:"id"`
-	Password string `json:"-"`
-	UserCreate
-}
-
-func entToUserOut(usr *UserOut, entUsr *ent.User) {
-	usr.ID = entUsr.ID
-	usr.Password = entUsr.Password
-	usr.UserCreate = UserCreate{
-		Name:        entUsr.Name,
-		Email:       entUsr.Email,
-		IsSuperuser: entUsr.IsSuperuser,
-	}
+	Id          int    `json:"id"`
+	Name        string `json:"name,omitempty"`
+	Email       string `json:"email,omitempty"`
+	Password    string `json:"password"`
+	IsSuperuser bool   `json:"isSuperuser"`
 }

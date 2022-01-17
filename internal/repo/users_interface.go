@@ -10,7 +10,7 @@ type UserRepository interface {
 	// GetAll returns all users
 	GetAll(ctx context.Context) ([]UserOut, error)
 	// Create creates a new user
-	Create(user *UserCreate, ctx context.Context) error
+	Create(user *UserCreate, ctx context.Context) (UserOut, error)
 	// Update updates a user
 	Update(user *UserCreate, ctx context.Context) error
 	// Delete deletes a user

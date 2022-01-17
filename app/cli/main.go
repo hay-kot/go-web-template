@@ -2,11 +2,13 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 
 	"github.com/hay-kot/git-web-template/ent"
 	"github.com/hay-kot/git-web-template/internal/config"
+	"github.com/hay-kot/git-web-template/internal/repo"
 	_ "github.com/mattn/go-sqlite3"
 
 	"github.com/urfave/cli/v2"
@@ -38,9 +40,13 @@ func run(cfg *config.Config) error {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
 
+	fmt.Print(cfg.Database.GetUrl())
+
 	// Create App
 	a := &app{
-		db: c,
+		repos: &repo.AllRepos{
+			Users: repo.NewUserRepositoryEnt(c),
+		},
 	}
 
 	app := &cli.App{

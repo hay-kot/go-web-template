@@ -1,7 +1,9 @@
 package main
 
-import "github.com/hay-kot/git-web-template/ent"
+import (
+	"github.com/hay-kot/git-web-template/internal/repo"
+)
 
 type app struct {
-	db *ent.Client
+	repos *repo.AllRepos
 }

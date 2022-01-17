@@ -30,7 +30,7 @@ func NewConfig(file string) (*Config, error) {
 	const prefix = "API"
 
 	help, err := func() (string, error) {
-		if _, err := os.Stat("/path/to/whatever"); errors.Is(err, os.ErrNotExist) {
+		if _, err := os.Stat(file); errors.Is(err, os.ErrNotExist) {
 			return conf.Parse(prefix, &cfg)
 		} else {
 			yamlData, err := ioutil.ReadFile(file)

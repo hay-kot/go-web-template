@@ -6,6 +6,8 @@ import (
 	"net/http"
 )
 
+
+
 // Respond converts a Go value to JSON and sends it to the client.
 // Adapted from https://github.com/ardanlabs/service/tree/master/foundation/web
 func Respond(w http.ResponseWriter, statusCode int, data interface{}) error {
