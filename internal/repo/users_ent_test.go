@@ -10,11 +10,12 @@ import (
 )
 
 func UserFactory() UserCreate {
+	f := faker.NewFaker()
 	return UserCreate{
-		Name:        faker.GetRandomString(10),
-		Email:       faker.GetRandomEmail(),
-		Password:    faker.GetRandomString(10),
-		IsSuperuser: faker.GetRandomBool(),
+		Name:        f.RandomString(10),
+		Email:       f.RandomEmail(),
+		Password:    f.RandomString(10),
+		IsSuperuser: f.RandomBool(),
 	}
 }
 

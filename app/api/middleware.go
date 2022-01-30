@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -20,6 +21,8 @@ func setGlobalMiddleware(r *chi.Mux) {
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
+
+	mwStripTrailingSlash(r)
 
 	// Set a timeout value on the request context (ctx), that will signal
 	// through ctx.Done() that the request has timed out and further
@@ -63,6 +66,14 @@ func mwAdmin(next http.Handler) http.Handler {
 		}
 
 		// Token is authenticated, pass it through
+		next.ServeHTTP(w, r)
+	})
+}
+
+// mqStripTrailingSlash is a middleware that will strip trailing slashes from the request path.
+func mwStripTrailingSlash(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		r.URL.Path = strings.TrimSuffix(r.URL.Path, "/")
 		next.ServeHTTP(w, r)
 	})
 }
