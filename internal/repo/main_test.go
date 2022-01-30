@@ -34,5 +34,7 @@ func TestMain(m *testing.M) {
 
 	defer client.Close()
 
+	m.Run()
+
 	os.Exit(m.Run())
 }

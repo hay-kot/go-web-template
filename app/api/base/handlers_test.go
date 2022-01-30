@@ -5,11 +5,11 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/hay-kot/git-web-template/internal/tests"
+	"github.com/hay-kot/git-web-template/internal/mocks"
 )
 
 func GetTestHandler(t *testing.T) *Handlersv1 {
-	return NewHandlerV1(tests.GetConsoleLogger(t))
+	return NewHandlerV1(mocks.GetConsoleLogger())
 }
 
 func TestHandlersv1_HandleBase(t *testing.T) {
