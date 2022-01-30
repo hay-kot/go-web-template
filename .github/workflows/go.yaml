@@ -7,7 +7,7 @@ on:
     branches: [master]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -24,7 +24,7 @@ jobs:
         run: make cli
 
       - name: Test
-        run: make test
+        run: make coverage
 
       - name: Upload coverage to Codecov
         run: bash <(curl -s https://codecov.io/bash)

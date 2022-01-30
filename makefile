@@ -8,5 +8,8 @@ api:
 cli:
 	go build -o manage ./app/cli 
 
-test:
+coverage:
 	go test -race -coverprofile=coverage.out -covermode=atomic ./app/... ./internal/... ./pkgs/... -v -cover
+
+test:
+	go test ./app/... ./internal/... ./pkgs/... -v
