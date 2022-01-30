@@ -70,6 +70,8 @@ func run(cfg *config.Config) error {
 	// =========================================================================
 	// Start Server
 
+	app.Conf.Print()
+
 	server := server.Server{
 		Port: cfg.Web.Port,
 		Host: cfg.Web.Host,
