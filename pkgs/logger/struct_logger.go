@@ -11,16 +11,6 @@ import (
 
 type Level int8
 
-// Props is a helper function that returns a map of key-value pairs that can be
-// used as the properties for a log entry.
-func Props(props ...string) map[string]string {
-	m := make(map[string]string)
-	for i := 0; i < len(props); i += 2 {
-		m[props[i]] = props[i+1]
-	}
-	return m
-}
-
 const (
 	LevelDebug Level = iota
 	LevelInfo
@@ -43,6 +33,8 @@ func (l Level) String() string {
 		return ""
 	}
 }
+
+type Props map[string]string
 
 type Logger struct {
 	out      io.Writer

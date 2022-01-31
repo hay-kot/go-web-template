@@ -10,7 +10,7 @@ import (
 
 type app struct {
 	Conf   *config.Config
-	logger logger.SharedLogger
+	logger *logger.Logger
 	mailer mailer.Mailer
 	jwt    *jwtauth.JWTAuth
 	db     *ent.Client

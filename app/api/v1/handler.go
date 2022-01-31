@@ -7,12 +7,12 @@ import (
 )
 
 type Handlersv1 struct {
-	log   logger.SharedLogger
+	log   *logger.Logger
 	jwt   *jwtauth.JWTAuth
 	repos *repo.AllRepos
 }
 
-func NewHandlerV1(prefix string, repos *repo.AllRepos, jwt *jwtauth.JWTAuth, log logger.SharedLogger) (func(s string) string, *Handlersv1) {
+func NewHandlerV1(prefix string, repos *repo.AllRepos, jwt *jwtauth.JWTAuth, log *logger.Logger) (func(s string) string, *Handlersv1) {
 	h := &Handlersv1{
 		log:   log,
 		jwt:   jwt,

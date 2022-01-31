@@ -65,7 +65,7 @@ func (s *app) LogRoutes(r *chi.Mux) {
 			text = text + " "
 		}
 
-		s.logger.Debug("Registered: %s%s\n", text, route)
+		fmt.Printf("Registered Route: %s%s\n", text, route)
 		return nil
 	}
 

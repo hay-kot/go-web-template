@@ -10,7 +10,7 @@ var mockHandler = &Handlersv1{}
 
 func TestMain(m *testing.M) {
 	// Set Handler Vars
-	mockHandler.log = mocks.GetConsoleLogger()
+	mockHandler.log = mocks.GetStructLogger()
 	mockHandler.jwt = mocks.GetJWTAuth()
 	repos, closeDb := mocks.GetEntRepos()
 	mockHandler.repos = repos

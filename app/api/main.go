@@ -45,20 +45,26 @@ func run(cfg *config.Config) error {
 		wrt = io.MultiWriter(wrt, f)
 	}
 
-	app.logger = logger.NewStandardLogger(log.New(wrt, "", 0))
+	app.logger = logger.New(wrt, logger.LevelDebug)
 
 	// =========================================================================
 	// Initialize Database & Repos
 
 	c, err := ent.Open(cfg.Database.GetDriver(), cfg.Database.GetUrl())
 	if err != nil {
-		app.logger.Fatalf("failed opening connection to sqlite: %v", err)
+		app.logger.Fatal(err, logger.Props{
+			"details":  "failed to connect to database",
+			"database": cfg.Database.GetDriver(),
+			"url":      cfg.Database.GetUrl(),
+		})
 	}
 	defer func(c *ent.Client) {
 		_ = c.Close()
 	}(c)
 	if err := c.Schema.Create(context.Background()); err != nil {
-		app.logger.Fatalf("failed creating schema resources: %v", err)
+		app.logger.Fatal(err, logger.Props{
+			"details": "failed to create schema",
+		})
 	}
 
 	app.db = c
@@ -80,6 +86,10 @@ func run(cfg *config.Config) error {
 	routes := app.newRouter(repos)
 	app.LogRoutes(routes)
 
-	app.logger.Info("Listening on %s:%s", server.Host, server.Port)
+	app.logger.Info("Listening on %s:%s", logger.Props{
+		"host": server.Host,
+		"port": server.Port,
+	})
+
 	return server.Start(routes)
 }
