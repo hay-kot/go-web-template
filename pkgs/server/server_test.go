@@ -12,12 +12,22 @@ func testServer(t *testing.T, r http.Handler) *Server {
 	svr := NewServer("127.0.0.1", "19245")
 
 	go func() {
-		err := svr.Start(r)
-		assert.NoError(t, err) // Just in case?
+		svr.Start(r)
 	}()
 
-	// Hack to get wait for the server to start
-	time.Sleep(time.Second)
+	ping := func() error {
+		_, err := http.Get("http://127.0.0.1:19245")
+		return err
+	}
+
+	started := false
+
+	for started == false {
+		if err := ping(); err == nil {
+			break
+		}
+		time.Sleep(time.Millisecond * 100)
+	}
 
 	return svr
 }
@@ -51,7 +61,7 @@ func Test_GracefulServerShutdownWithRequests(t *testing.T) {
 	router := http.NewServeMux()
 
 	router.HandleFunc("/test", func(rw http.ResponseWriter, r *http.Request) {
-		time.Sleep(time.Second * 4)
+		time.Sleep(time.Second * 3)
 		isFinished = true
 	})
 
@@ -59,8 +69,7 @@ func Test_GracefulServerShutdownWithRequests(t *testing.T) {
 
 	// Make request to "/test"
 	go func() {
-		_, err := http.Get("http://localhost:19245/test") // This is probably bad?
-		assert.NoError(t, err)
+		http.Get("http://127.0.0.1:19245/test") // This is probably bad?
 	}()
 
 	time.Sleep(time.Second) // Hack to wait for the request to be made
