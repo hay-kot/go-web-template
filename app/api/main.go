@@ -86,7 +86,7 @@ func run(cfg *config.Config) error {
 	routes := app.newRouter(repos)
 	app.LogRoutes(routes)
 
-	app.logger.Info("Listening on %s:%s", logger.Props{
+	app.logger.Info("Starting HTTP Server", logger.Props{
 		"host": server.Host,
 		"port": server.Port,
 	})
