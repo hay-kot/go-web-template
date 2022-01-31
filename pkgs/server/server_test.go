@@ -20,9 +20,7 @@ func testServer(t *testing.T, r http.Handler) *Server {
 		return err
 	}
 
-	started := false
-
-	for started == false {
+	for {
 		if err := ping(); err == nil {
 			break
 		}
@@ -30,6 +28,13 @@ func testServer(t *testing.T, r http.Handler) *Server {
 	}
 
 	return svr
+}
+
+func Test_ServerShutdown_Error(t *testing.T) {
+	svr := NewServer("127.0.0.1", "19245")
+
+	err := svr.Shutdown("test")
+	assert.ErrorIs(t, err, ErrServerNotStarted)
 }
 
 func Test_ServerStarts(t *testing.T) {
@@ -60,6 +65,7 @@ func Test_GracefulServerShutdownWithRequests(t *testing.T) {
 
 	router := http.NewServeMux()
 
+	// add long running handler func
 	router.HandleFunc("/test", func(rw http.ResponseWriter, r *http.Request) {
 		time.Sleep(time.Second * 3)
 		isFinished = true

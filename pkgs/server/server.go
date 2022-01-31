@@ -17,10 +17,11 @@ import (
 var ErrServerNotStarted = errors.New("server not started")
 
 type Server struct {
-	Host   string
-	Port   string
-	wg     sync.WaitGroup
+	Host string
+	Port string
+
 	Worker Worker
+	wg     sync.WaitGroup
 
 	started      bool
 	activeServer *http.Server
@@ -46,6 +47,7 @@ func (s *Server) Shutdown(sig string) error {
 	defer cancel()
 
 	err := s.activeServer.Shutdown(ctx)
+	s.started = false
 	if err != nil {
 		return err
 	}
