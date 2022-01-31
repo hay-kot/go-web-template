@@ -12,25 +12,53 @@ import (
 	"time"
 )
 
-// TODO: #3 Implement graceful shutdown
 // TODO: #2 Implement Go routine pool/job queue
 
+var ErrServerNotStarted = errors.New("server not started")
+
 type Server struct {
-	Host string
-	Port string
-	Wg   *sync.WaitGroup
+	Host   string
+	Port   string
+	wg     sync.WaitGroup
+	Worker Worker
+
+	started      bool
+	activeServer *http.Server
 }
 
 func NewServer(host, port string) *Server {
 	return &Server{
-		Host: host,
-		Port: port,
-		Wg:   &sync.WaitGroup{},
+		Host:   host,
+		Port:   port,
+		wg:     sync.WaitGroup{},
+		Worker: NewSimpleWorker(),
 	}
 }
 
+func (s *Server) Shutdown(sig string) error {
+	if !s.started {
+		return ErrServerNotStarted
+	}
+	fmt.Printf("Received %s signal, shutting down\n", sig)
+
+	// Create a context with a 5-second timeout.
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	err := s.activeServer.Shutdown(ctx)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("Http server shutdown, waiting for all tasks to finish")
+	s.wg.Wait()
+
+	return nil
+
+}
+
 func (s *Server) Start(router http.Handler) error {
-	httpServer := &http.Server{
+	s.activeServer = &http.Server{
 		Addr:         s.Host + ":" + s.Port,
 		Handler:      router,
 		IdleTimeout:  time.Minute,
@@ -49,20 +77,19 @@ func (s *Server) Start(router http.Handler) error {
 		signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 
 		// Read the signal from the quit channel. block until received
-		s := <-quit
-		fmt.Println("received termination request -> ", s.String())
+		sig := <-quit
 
-		// Create a context with a 5-second timeout.
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		defer cancel()
-
-		shutdownError <- httpServer.Shutdown(ctx)
+		err := s.Shutdown(sig.String())
+		if err != nil {
+			shutdownError <- err
+		}
 
 		// Exit the application with a 0 (success) status code.
 		os.Exit(0)
 	}()
 
-	err := httpServer.ListenAndServe()
+	s.started = true
+	err := s.activeServer.ListenAndServe()
 
 	if !errors.Is(err, http.ErrServerClosed) {
 		return err
@@ -80,10 +107,10 @@ func (s *Server) Start(router http.Handler) error {
 
 // Background starts a go routine that runs on the servers pool. In the event of a shutdown
 // request, the server will wait until all open goroutines have finished before shutting down.
-func (s *Server) Background(task func()) {
-	s.Wg.Add(1)
-	go func() {
-		defer s.Wg.Done()
+func (svr *Server) Background(task func()) {
+	svr.wg.Add(1)
+	svr.Worker.Add(func() {
+		defer svr.wg.Done()
 		task()
-	}()
+	})
 }

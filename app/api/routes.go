@@ -26,7 +26,7 @@ func (s *app) newRouter(repos *repo.AllRepos) *chi.Mux {
 		http.ServeFile(w, r, "static/favicon.ico")
 	})
 
-	baseHandler := base.NewHandlerV1(s.logger)
+	baseHandler := base.NewHandlerV1(s.logger, s.server)
 	r.Get(prefix, baseHandler.HandleBase("v1"))
 
 	// =========================================================================
