@@ -12,7 +12,13 @@ import (
 	"os"
 )
 
+const (
+	ModeDevelopment = "development"
+	ModeProduction  = "production"
+)
+
 type Config struct {
+	Mode     string     `yaml:"mode" conf:"default:development"` // development or production
 	Web      WebConfig  `yaml:"web"`
 	Database Database   `yaml:"database"`
 	Log      LoggerConf `yaml:"logger"`

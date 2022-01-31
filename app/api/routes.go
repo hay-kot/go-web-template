@@ -16,7 +16,7 @@ const prefix = "/api"
 // registerRoutes registers all the routes for the API
 func (s *app) newRouter(repos *repo.AllRepos) *chi.Mux {
 	r := chi.NewRouter()
-	setGlobalMiddleware(r)
+	s.setGlobalMiddleware(r)
 
 	// =========================================================================
 	// Base Routes
