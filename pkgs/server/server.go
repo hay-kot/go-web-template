@@ -5,6 +5,9 @@ import (
 	"sync"
 )
 
+// TODO: #3 Implement graceful shutdown
+// TODO: #2 Implement Go routine pool/job queue
+
 type Server struct {
 	Host string
 	Port string
