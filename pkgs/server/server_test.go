@@ -37,6 +37,16 @@ func Test_ServerShutdown_Error(t *testing.T) {
 	assert.ErrorIs(t, err, ErrServerNotStarted)
 }
 
+func Test_ServerStarts_Error(t *testing.T) {
+	svr := testServer(t, nil)
+
+	err := svr.Start(nil)
+	assert.ErrorIs(t, err, ErrServerAlreadyStarted)
+
+	err = svr.Shutdown("test")
+	assert.NoError(t, err)
+}
+
 func Test_ServerStarts(t *testing.T) {
 	svr := testServer(t, nil)
 	err := svr.Shutdown("test")

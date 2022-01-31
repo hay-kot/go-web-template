@@ -15,6 +15,7 @@ import (
 // TODO: #2 Implement Go routine pool/job queue
 
 var ErrServerNotStarted = errors.New("server not started")
+var ErrServerAlreadyStarted = errors.New("server already started")
 
 type Server struct {
 	Host string
@@ -60,6 +61,10 @@ func (s *Server) Shutdown(sig string) error {
 }
 
 func (s *Server) Start(router http.Handler) error {
+	if s.started {
+		return ErrServerAlreadyStarted
+	}
+
 	s.activeServer = &http.Server{
 		Addr:         s.Host + ":" + s.Port,
 		Handler:      router,
