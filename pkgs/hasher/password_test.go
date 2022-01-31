@@ -3,6 +3,7 @@ package hasher
 import "testing"
 
 func TestHashPassword(t *testing.T) {
+	t.Parallel()
 	type args struct {
 		password string
 	}

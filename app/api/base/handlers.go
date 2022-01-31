@@ -8,10 +8,10 @@ import (
 )
 
 type Handlersv1 struct {
-	log logger.SharedLogger
+	log *logger.Logger
 }
 
-func NewHandlerV1(log logger.SharedLogger) *Handlersv1 {
+func NewHandlerV1(log *logger.Logger) *Handlersv1 {
 	h := &Handlersv1{
 		log: log,
 	}
@@ -37,7 +37,7 @@ func (h *Handlersv1) HandleBase(versions ...string) http.HandlerFunc {
 		err := server.Respond(w, http.StatusOK, data)
 
 		if err != nil {
-			h.log.Errorf("Error handling base route: %s", err.Error())
+			h.log.Error(err, nil)
 			server.Respond500(w)
 		}
 	}

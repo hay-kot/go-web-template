@@ -32,6 +32,11 @@ func GetSkip(r *http.Request, d string) string {
 	return GetParam(r, "skip", d)
 }
 
+// GetSkip is a shotcut to get the skip from the request URL parameters
+func GetId(r *http.Request, d string) string {
+	return GetParam(r, "id", d)
+}
+
 // GetLimit is a shotcut to get the limit from the request URL parameters
 func GetLimit(r *http.Request, d string) string {
 	return GetParam(r, "limit", d)

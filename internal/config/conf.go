@@ -1,6 +1,7 @@
 package config
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -11,10 +12,17 @@ import (
 	"os"
 )
 
+const (
+	ModeDevelopment = "development"
+	ModeProduction  = "production"
+)
+
 type Config struct {
+	Mode     string     `yaml:"mode" conf:"default:development"` // development or production
 	Web      WebConfig  `yaml:"web"`
 	Database Database   `yaml:"database"`
 	Log      LoggerConf `yaml:"logger"`
+	Mailer   MailerConf `yaml:"mailer"`
 }
 
 type WebConfig struct {
@@ -50,4 +58,17 @@ func NewConfig(file string) (*Config, error) {
 	}
 
 	return &cfg, nil
+}
+
+// Print prints the configuration to stdout as a json indented string
+// This is useful for debugging. If the marshaller errors out, it will panic.
+func (c *Config) Print() {
+	res, err := json.MarshalIndent(c, "", "  ")
+
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(string(res))
+
 }
