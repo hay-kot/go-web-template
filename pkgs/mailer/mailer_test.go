@@ -46,7 +46,7 @@ func Test_Mailer(t *testing.T) {
 		t.Skip("Mailer not ready - Skipping")
 	}
 
-	message, err := MsgTemplates.RenderWelcome()
+	message, err := RenderWelcome()
 
 	if err != nil {
 		t.Error(err)

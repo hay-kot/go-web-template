@@ -26,7 +26,7 @@ func (tp *TemplateProps) Set(key, value string) {
 	tp.Data[key] = value
 }
 
-func NewTemplateProps() TemplateProps {
+func DefaultTemplateData() TemplateProps {
 	return TemplateProps{
 		Defaults: TemplateDefaults{
 			CompanyName:        "Haybytes.com",
@@ -39,15 +39,7 @@ func NewTemplateProps() TemplateProps {
 	}
 }
 
-type MailerTemplates struct {
-	welcome string
-}
-
-var MsgTemplates = MailerTemplates{
-	welcome: templatesWelcome,
-}
-
-func (mt *MailerTemplates) render(tpl string, data TemplateProps) (string, error) {
+func render(tpl string, data TemplateProps) (string, error) {
 	tmpl, err := template.New("name").Parse(tpl)
 
 	if err != nil {
@@ -65,6 +57,6 @@ func (mt *MailerTemplates) render(tpl string, data TemplateProps) (string, error
 	return tplBuffer.String(), nil
 }
 
-func (mt *MailerTemplates) RenderWelcome() (string, error) {
-	return mt.render(mt.welcome, NewTemplateProps())
+func RenderWelcome() (string, error) {
+	return render(templatesWelcome, DefaultTemplateData())
 }
