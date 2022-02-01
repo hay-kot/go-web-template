@@ -10,7 +10,7 @@ import (
 )
 
 type app struct {
-	Conf   *config.Config
+	conf   *config.Config
 	logger *logger.Logger
 	mailer mailer.Mailer
 	jwt    *jwtauth.JWTAuth
@@ -20,17 +20,17 @@ type app struct {
 
 func NewApp(conf *config.Config) *app {
 	s := &app{
-		Conf: conf,
+		conf: conf,
 	}
 
 	s.jwt = jwtauth.New("HS256", []byte("secret"), nil)
 
 	s.mailer = mailer.Mailer{
-		Host:     s.Conf.Mailer.Host,
-		Port:     s.Conf.Mailer.Port,
-		Username: s.Conf.Mailer.Username,
-		Password: s.Conf.Mailer.Password,
-		From:     s.Conf.Mailer.From,
+		Host:     s.conf.Mailer.Host,
+		Port:     s.conf.Mailer.Port,
+		Username: s.conf.Mailer.Username,
+		Password: s.conf.Mailer.Password,
+		From:     s.conf.Mailer.From,
 	}
 
 	return s

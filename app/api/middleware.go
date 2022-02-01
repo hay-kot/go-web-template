@@ -25,7 +25,7 @@ func (a *app) setGlobalMiddleware(r *chi.Mux) {
 
 	// Use struct logger in production for requests, but use
 	// pretty console logger in development.
-	if a.Conf.Mode == config.ModeDevelopment {
+	if a.conf.Mode == config.ModeDevelopment {
 		r.Use(middleware.Logger)
 	} else {
 		r.Use(a.mwStructLogger)

@@ -23,6 +23,7 @@ type Config struct {
 	Database Database   `yaml:"database"`
 	Log      LoggerConf `yaml:"logger"`
 	Mailer   MailerConf `yaml:"mailer"`
+	Seed     Seed       `yaml:"seed"`
 }
 
 type WebConfig struct {

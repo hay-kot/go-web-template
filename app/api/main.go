@@ -34,8 +34,8 @@ func run(cfg *config.Config) error {
 
 	var wrt io.Writer
 	wrt = os.Stdout
-	if app.Conf.Log.File != "" {
-		f, err := os.OpenFile(app.Conf.Log.File, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if app.conf.Log.File != "" {
+		f, err := os.OpenFile(app.conf.Log.File, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 		if err != nil {
 			log.Fatalf("error opening file: %v", err)
 		}
@@ -76,12 +76,14 @@ func run(cfg *config.Config) error {
 	// =========================================================================
 	// Start Server
 
-	app.Conf.Print()
+	app.conf.Print()
 
-	app.server = server.NewServer(app.Conf.Web.Host, app.Conf.Web.Port)
+	app.server = server.NewServer(app.conf.Web.Host, app.conf.Web.Port)
 
 	routes := app.newRouter(repos)
 	app.LogRoutes(routes)
+
+	app.SeedDatabase(repos)
 
 	app.logger.Info("Starting HTTP Server", logger.Props{
 		"host": app.server.Host,
