@@ -9,7 +9,7 @@ import (
 )
 
 func GetTestHandler(t *testing.T) *Handlersv1 {
-	return NewHandlerV1(mocks.GetStructLogger())
+	return NewHandlerV1(mocks.GetStructLogger(), nil)
 }
 
 func TestHandlersv1_HandleBase(t *testing.T) {

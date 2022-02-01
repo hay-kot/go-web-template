@@ -78,18 +78,15 @@ func run(cfg *config.Config) error {
 
 	app.Conf.Print()
 
-	server := server.Server{
-		Port: cfg.Web.Port,
-		Host: cfg.Web.Host,
-	}
+	app.server = server.NewServer(app.Conf.Web.Host, app.Conf.Web.Port)
 
 	routes := app.newRouter(repos)
 	app.LogRoutes(routes)
 
 	app.logger.Info("Starting HTTP Server", logger.Props{
-		"host": server.Host,
-		"port": server.Port,
+		"host": app.server.Host,
+		"port": app.server.Port,
 	})
 
-	return server.Start(routes)
+	return app.server.Start(routes)
 }

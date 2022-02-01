@@ -15,7 +15,8 @@ func (s *Handlersv1) HandleUserSelf() http.HandlerFunc {
 		usr, err := s.repos.Users.GetOneEmail(username, r.Context())
 
 		if err != nil {
-			_ = server.RespondError(w, http.StatusInternalServerError, err)
+			s.log.Error(err, nil)
+			server.RespondInternalServerError(w)
 		}
 
 		// Return Username

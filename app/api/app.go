@@ -6,6 +6,7 @@ import (
 	"github.com/hay-kot/git-web-template/internal/config"
 	"github.com/hay-kot/git-web-template/pkgs/logger"
 	"github.com/hay-kot/git-web-template/pkgs/mailer"
+	"github.com/hay-kot/git-web-template/pkgs/server"
 )
 
 type app struct {
@@ -14,6 +15,7 @@ type app struct {
 	mailer mailer.Mailer
 	jwt    *jwtauth.JWTAuth
 	db     *ent.Client
+	server *server.Server
 }
 
 func NewApp(conf *config.Config) *app {

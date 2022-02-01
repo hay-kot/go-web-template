@@ -9,11 +9,13 @@ import (
 
 type Handlersv1 struct {
 	log *logger.Logger
+	svr *server.Server
 }
 
-func NewHandlerV1(log *logger.Logger) *Handlersv1 {
+func NewHandlerV1(log *logger.Logger, svr *server.Server) *Handlersv1 {
 	h := &Handlersv1{
 		log: log,
+		svr: svr,
 	}
 	return h
 }
@@ -38,7 +40,7 @@ func (h *Handlersv1) HandleBase(versions ...string) http.HandlerFunc {
 
 		if err != nil {
 			h.log.Error(err, nil)
-			server.Respond500(w)
+			server.RespondInternalServerError(w)
 		}
 	}
 }

@@ -43,7 +43,7 @@ func (s *Handlersv1) HandleAuthLogin() http.HandlerFunc {
 		usr, err := s.repos.Users.GetOneEmail(loginForm.Username, r.Context())
 
 		if err != nil || !hasher.CheckPasswordHash(loginForm.Password, usr.Password) {
-			_ = server.RespondError(w, http.StatusUnauthorized, errors.New("invalid username or password"))
+			server.RespondError(w, http.StatusUnauthorized, errors.New("invalid username or password"))
 			return
 		}
 

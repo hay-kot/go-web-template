@@ -36,16 +36,26 @@ func Respond(w http.ResponseWriter, statusCode int, data interface{}) error {
 }
 
 // ResponseError is a helper function that sends a JSON response of an error message
-func RespondError(w http.ResponseWriter, statusCode int, err error) error {
-	return Respond(w, statusCode, struct {
-		Error string `json:"details"`
-	}{
-		Error: err.Error(),
-	})
+func RespondError(w http.ResponseWriter, statusCode int, err error) {
+	eb := ErrorBuilder{}
+	eb.AddError(err)
+	eb.Respond(w, statusCode)
 }
 
-// Respond500 is a wrapper around RespondError that sends a 500 internal server error. Useful for
+// RespondInternalServerError is a wrapper around RespondError that sends a 500 internal server error. Useful for
 // Sending generic errors when everything went wrong.
-func Respond500(w http.ResponseWriter) {
-	_ = RespondError(w, http.StatusInternalServerError, errors.New("internal server error"))
+func RespondInternalServerError(w http.ResponseWriter) {
+	RespondError(w, http.StatusInternalServerError, errors.New("internal server error"))
+}
+
+// RespondNotFound is a helper utility for responding with a generic
+// "unauthorized" error.
+func RespondUnauthorized(w http.ResponseWriter) {
+	RespondError(w, http.StatusUnauthorized, errors.New("unauthorized"))
+}
+
+// RespondForbidden is a helper utility for responding with a generic
+// "forbidden" error.
+func RespondForbidden(w http.ResponseWriter) {
+	RespondError(w, http.StatusForbidden, errors.New("forbidden"))
 }
