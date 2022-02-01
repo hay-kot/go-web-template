@@ -5,13 +5,14 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/hay-kot/git-web-template/internal/dtos"
 	"github.com/hay-kot/git-web-template/pkgs/faker"
 	"github.com/stretchr/testify/assert"
 )
 
-func UserFactory() UserCreate {
+func UserFactory() dtos.UserCreate {
 	f := faker.NewFaker()
-	return UserCreate{
+	return dtos.UserCreate{
 		Name:        f.RandomString(10),
 		Email:       f.RandomEmail(),
 		Password:    f.RandomString(10),
@@ -56,7 +57,7 @@ func Test_EntUserRepo_GetOneId(t *testing.T) {
 
 func Test_EntUserRepo_GetAll(t *testing.T) {
 	// Setup
-	toCreate := []UserCreate{
+	toCreate := []dtos.UserCreate{
 		UserFactory(),
 		UserFactory(),
 		UserFactory(),
@@ -65,7 +66,7 @@ func Test_EntUserRepo_GetAll(t *testing.T) {
 
 	ctx := context.Background()
 
-	created := []UserOut{}
+	created := []dtos.UserOut{}
 
 	for _, usr := range toCreate {
 		usrOut, _ := testRepos.Users.Create(&usr, ctx)

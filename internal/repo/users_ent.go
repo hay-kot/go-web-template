@@ -5,13 +5,14 @@ import (
 
 	"github.com/hay-kot/git-web-template/ent"
 	"github.com/hay-kot/git-web-template/ent/user"
+	"github.com/hay-kot/git-web-template/internal/dtos"
 )
 
 type EntUserRepository struct {
 	db *ent.Client
 }
 
-func (e *EntUserRepository) toUserOut(usr *UserOut, entUsr *ent.User) {
+func (e *EntUserRepository) toUserOut(usr *dtos.UserOut, entUsr *ent.User) {
 	usr.Id = entUsr.ID
 	usr.Password = entUsr.Password
 	usr.Name = entUsr.Name
@@ -24,10 +25,10 @@ func NewUserRepositoryEnt(db *ent.Client) *EntUserRepository {
 	return &EntUserRepository{db: db}
 }
 
-func (e *EntUserRepository) GetOneId(id int, ctx context.Context) (UserOut, error) {
+func (e *EntUserRepository) GetOneId(id int, ctx context.Context) (dtos.UserOut, error) {
 	usr, err := e.db.User.Query().Where(user.ID(id)).Only(ctx)
 
-	usrOut := UserOut{}
+	usrOut := dtos.UserOut{}
 
 	if err != nil {
 		return usrOut, err
@@ -38,10 +39,10 @@ func (e *EntUserRepository) GetOneId(id int, ctx context.Context) (UserOut, erro
 	return usrOut, nil
 }
 
-func (e *EntUserRepository) GetOneEmail(email string, ctx context.Context) (UserOut, error) {
+func (e *EntUserRepository) GetOneEmail(email string, ctx context.Context) (dtos.UserOut, error) {
 	usr, err := e.db.User.Query().Where(user.Email(email)).Only(ctx)
 
-	usrOut := UserOut{}
+	usrOut := dtos.UserOut{}
 
 	if err != nil {
 		return usrOut, err
@@ -52,17 +53,17 @@ func (e *EntUserRepository) GetOneEmail(email string, ctx context.Context) (User
 	return usrOut, nil
 }
 
-func (e *EntUserRepository) GetAll(ctx context.Context) ([]UserOut, error) {
+func (e *EntUserRepository) GetAll(ctx context.Context) ([]dtos.UserOut, error) {
 	users, err := e.db.User.Query().All(ctx)
 
 	if err != nil {
 		return nil, err
 	}
 
-	var usrs []UserOut
+	var usrs []dtos.UserOut
 
 	for _, usr := range users {
-		usrOut := UserOut{}
+		usrOut := dtos.UserOut{}
 		e.toUserOut(&usrOut, usr)
 		usrs = append(usrs, usrOut)
 	}
@@ -70,9 +71,9 @@ func (e *EntUserRepository) GetAll(ctx context.Context) ([]UserOut, error) {
 	return usrs, nil
 }
 
-func (e *EntUserRepository) Create(usr *UserCreate, ctx context.Context) (UserOut, error) {
+func (e *EntUserRepository) Create(usr *dtos.UserCreate, ctx context.Context) (dtos.UserOut, error) {
 	err := usr.Validate()
-	usrOut := UserOut{}
+	usrOut := dtos.UserOut{}
 
 	if err != nil {
 		return usrOut, err
@@ -91,7 +92,7 @@ func (e *EntUserRepository) Create(usr *UserCreate, ctx context.Context) (UserOu
 	return usrOut, err
 }
 
-func (e *EntUserRepository) Update(user *UserCreate, ctx context.Context) error {
+func (e *EntUserRepository) Update(user *dtos.UserCreate, ctx context.Context) error {
 	//TODO implement me
 	panic("implement me")
 }

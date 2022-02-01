@@ -6,7 +6,7 @@ import (
 	"os"
 	"text/tabwriter"
 
-	"github.com/hay-kot/git-web-template/internal/repo"
+	"github.com/hay-kot/git-web-template/internal/dtos"
 	"github.com/hay-kot/git-web-template/pkgs/hasher"
 	"github.com/urfave/cli/v2"
 )
@@ -27,7 +27,7 @@ func (a *app) UserCreate(c *cli.Context) error {
 		return err
 	}
 
-	usr := &repo.UserCreate{
+	usr := &dtos.UserCreate{
 		Name:        name,
 		Email:       email,
 		Password:    pwHash,

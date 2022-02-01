@@ -1,18 +1,22 @@
 package repo
 
-import "context"
+import (
+	"context"
+
+	"github.com/hay-kot/git-web-template/internal/dtos"
+)
 
 type UserRepository interface {
 	// GetOneId returns a user by id
-	GetOneId(id int, ctx context.Context) (UserOut, error)
+	GetOneId(id int, ctx context.Context) (dtos.UserOut, error)
 	// GetOneEmail returns a user by email
-	GetOneEmail(email string, ctx context.Context) (UserOut, error)
+	GetOneEmail(email string, ctx context.Context) (dtos.UserOut, error)
 	// GetAll returns all users
-	GetAll(ctx context.Context) ([]UserOut, error)
+	GetAll(ctx context.Context) ([]dtos.UserOut, error)
 	// Create creates a new user
-	Create(user *UserCreate, ctx context.Context) (UserOut, error)
+	Create(user *dtos.UserCreate, ctx context.Context) (dtos.UserOut, error)
 	// Update updates a user
-	Update(user *UserCreate, ctx context.Context) error
+	Update(user *dtos.UserCreate, ctx context.Context) error
 	// Delete deletes a user
 	Delete(id int, ctx context.Context) error
 }
