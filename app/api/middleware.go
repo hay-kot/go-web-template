@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -45,12 +44,12 @@ func mwAuth(next http.Handler) http.Handler {
 		token, _, err := jwtauth.FromContext(r.Context())
 
 		if err != nil {
-			_ = server.RespondError(w, http.StatusUnauthorized, errors.New("unauthorized"))
+			server.RespondUnauthorized(w)
 			return
 		}
 
 		if token == nil || jwt.Validate(token) != nil {
-			_ = server.RespondError(w, http.StatusUnauthorized, errors.New("unauthorized"))
+			server.RespondUnauthorized(w)
 			return
 		}
 
@@ -65,12 +64,12 @@ func mwAdmin(next http.Handler) http.Handler {
 		token, _, err := jwtauth.FromContext(r.Context())
 
 		if err != nil {
-			_ = server.RespondError(w, http.StatusUnauthorized, errors.New("unauthorized"))
+			server.RespondUnauthorized(w)
 			return
 		}
 
 		if token == nil || jwt.Validate(token) != nil {
-			_ = server.RespondError(w, http.StatusUnauthorized, errors.New("unauthorized"))
+			server.RespondUnauthorized(w)
 			return
 		}
 

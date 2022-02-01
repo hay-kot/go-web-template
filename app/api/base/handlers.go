@@ -40,7 +40,7 @@ func (h *Handlersv1) HandleBase(versions ...string) http.HandlerFunc {
 
 		if err != nil {
 			h.log.Error(err, nil)
-			server.Respond500(w)
+			server.RespondInternalServerError(w)
 		}
 	}
 }
