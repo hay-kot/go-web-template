@@ -5,7 +5,7 @@
 This Go Web Template is a simple starter template for a Go web application. It includes a simple web server API, as well as a start CLI to manage the web server/database. It should be noted that while while use of the standard library is a high priority, this template does make use of multiple external packages. It does however abide by the standard http handler pattern.
 
 - [Go Web Template](#go-web-template)
-  - [Template Includes](#template-includes)
+  - [Template Features](#template-features)
     - [Web API](#web-api)
   - [Management CLI](#management-cli)
     - [Docker Setup](#docker-setup)
@@ -23,12 +23,17 @@ This Go Web Template is a simple starter template for a Go web application. It i
       - [Create User](#create-user)
       - [Delete User](#delete-user)
 
-## Template Includes
+## Template Features
 
-- [ ] Test Coverage
-- [ ] Basic CI/CD Workflow
+- [ ] Test Coverage (Partial)
+- [x] Basic CI/CD Workflow
+- [ ] Mailer classes for easy email sending
+  - [x] Starter email templates
+    - [x] Activate Account
+    - [ ] Password Reset
 - [ ] Swappable SQLite/Postgres backends
 - [ ] Password Reset by Email
+- [ ] Dependency free structured logging
 
 ### Web API
 
@@ -40,21 +45,25 @@ This Go Web Template is a simple starter template for a Go web application. It i
 - [x] Ent for Database
   - [x] Basic users with hashed password storage
 - [x] Yaml/Args Config
+- [x] Background Tasks
+- [x] Graceful Shutdown (Background tasks and Routes)
 
 ## Management CLI
 
-- [x] CLI Interface
+- [ ] CLI Interface (Partial)
 
 ### Docker Setup
 
-- [ ] Build and Run API
-- [ ] Build and Setup CLI in path
+- [x] Build and Run API
+- [x] Build and Setup CLI in path
 
 ## Makefile
 
 - **Build and Run API:** `make api`
 - **Build Production Image** `make prod`
 - **Build CLI** `make cli`
+- **Test** `make test`
+- **Coverage** `make coverage`
 
 ## How To Use: Application API
 
@@ -84,16 +93,23 @@ As an exception to the above, this project adhears to the convention set by `Ent
 
 ```yaml
 # config.yml
+---
+mode: development
 web:
-  port: 3001
+  port: 3915
   host: 127.0.0.1
 database:
   driver: sqlite3
   sqlite-url: ./ent.db?_fk=1
-#  postgres-url:
 logger:
   level: debug
   file: api.log
+mailer:
+  host: smtp.example.com
+  port: 465
+  username:
+  password:
+  from: example@email.com
 ```
 
 ## How To Use: Application CLI
