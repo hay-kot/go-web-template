@@ -33,7 +33,7 @@ This Go Web Template is a simple starter template for a Go web application. It i
     - [ ] Password Reset
 - [ ] Swappable SQLite/Postgres backends
 - [ ] Password Reset by Email
-- [ ] Dependency free structured logging
+- [x] Dependency free structured logging
 
 ### Web API
 
