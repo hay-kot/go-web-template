@@ -92,3 +92,23 @@ func Test_EntUserRepo_GetAll(t *testing.T) {
 func Test_EntUserRepo_Update(t *testing.T) {
 	t.Skip()
 }
+
+func Test_EntUserRepo_Delete(t *testing.T) {
+	// Create 10 Users
+	for i := 0; i < 10; i++ {
+		user := UserFactory()
+		ctx := context.Background()
+		_, _ = testRepos.Users.Create(&user, ctx)
+	}
+
+	// Delete all
+	ctx := context.Background()
+	allUsers, _ := testRepos.Users.GetAll(ctx)
+
+	assert.Greater(t, len(allUsers), 0)
+	testRepos.Users.DeleteAll(ctx)
+
+	allUsers, _ = testRepos.Users.GetAll(ctx)
+	assert.Equal(t, len(allUsers), 0)
+
+}

@@ -5,6 +5,9 @@ import (
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/hay-kot/git-web-template/internal/dtos"
+	"github.com/hay-kot/git-web-template/pkgs/hasher"
+	"github.com/hay-kot/git-web-template/pkgs/logger"
 	"github.com/hay-kot/git-web-template/pkgs/server"
 )
 
@@ -43,6 +46,50 @@ func (s *Handlersv1) HandleAdminUserGet() http.HandlerFunc {
 
 func (s *Handlersv1) HandleAdminUserCreate() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		createData := dtos.UserCreate{}
+
+		if err := server.Decode(r, &createData); err != nil {
+			s.log.Error(err, logger.Props{
+				"scope":   "admin",
+				"details": "failed to decode user create data",
+			})
+			server.RespondError(w, http.StatusBadRequest, err)
+			return
+		}
+
+		err := createData.Validate()
+
+		if err != nil {
+			server.RespondError(w, http.StatusUnprocessableEntity, err)
+			return
+		}
+
+		hashedPw, err := hasher.HashPassword(createData.Password)
+
+		if err != nil {
+			s.log.Error(err, logger.Props{
+				"scope":   "admin",
+				"details": "failed to hash password",
+			})
+
+			server.RespondError(w, http.StatusInternalServerError, err)
+			return
+		}
+
+		createData.Password = hashedPw
+		userOut, err := s.repos.Users.Create(&createData, r.Context())
+
+		if err != nil {
+			s.log.Error(err, logger.Props{
+				"scope":   "admin",
+				"details": "failed to create user",
+			})
+
+			server.RespondError(w, http.StatusInternalServerError, err)
+			return
+		}
+
+		server.Respond(w, http.StatusCreated, server.Wrap("user", userOut))
 	}
 }
 

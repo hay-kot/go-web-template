@@ -19,4 +19,6 @@ type UserRepository interface {
 	Update(user *dtos.UserCreate, ctx context.Context) error
 	// Delete deletes a user
 	Delete(id int, ctx context.Context) error
+
+	DeleteAll(ctx context.Context) error
 }

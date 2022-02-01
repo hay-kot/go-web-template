@@ -59,7 +59,7 @@ func mwAuth(next http.Handler) http.Handler {
 }
 
 // mwAuth is a middleware that will check the JWT token
-func mwAdmin(next http.Handler) http.Handler {
+func (a *app) mwAdmin(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		token, _, err := jwtauth.FromContext(r.Context())
 

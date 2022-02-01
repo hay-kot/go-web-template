@@ -101,3 +101,8 @@ func (e *EntUserRepository) Delete(id int, ctx context.Context) error {
 	_, err := e.db.User.Delete().Where(user.ID(id)).Exec(ctx)
 	return err
 }
+
+func (e *EntUserRepository) DeleteAll(ctx context.Context) error {
+	_, err := e.db.User.Delete().Exec(ctx)
+	return err
+}
