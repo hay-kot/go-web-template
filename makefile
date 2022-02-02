@@ -16,5 +16,5 @@ test:
 
 
 test-client:
-	cd backend && go run ./app/api/ & sleep 5 && cd client && npm run test
+	-cd backend && go run ./app/api/ & sleep 5 && cd client && npm run test
 	pkill -SIGTERM api

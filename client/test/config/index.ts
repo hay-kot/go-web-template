@@ -1,11 +1,18 @@
 interface Config {
-  PORT: number;
+  PORT: string;
   HOST: string;
   BASE_URL: string;
 }
 
-export const config: Config = Object.freeze({
-  PORT: 3915,
-  HOST: "http://localhost",
-  BASE_URL: "http://localhost:" + 3915,
-});
+class Configuration implements Config {
+  PORT: string;
+  HOST: string;
+  BASE_URL: string;
+  constructor() {
+    (this.PORT = process.env.API_WEB_PORT || "3000"),
+      (this.HOST = "http" + process.env.API_WEB_HOST || "http://127.0.0.1"),
+      (this.BASE_URL = this.HOST + ":" + this.PORT);
+  }
+}
+
+export const config = new Configuration();
