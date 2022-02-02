@@ -43,7 +43,17 @@ This Go Web Template is a simple starter template for a Go web application. It i
 ### General
 
 - [ ] Test Coverage (WIP)
-- [x] Basic CI/CD Workflow
+- [ ] End to End Testing Framework
+  - [ ] Build with TS for ready to go frontend client
+  - [x] Github CI for end to end testing
+  - [ ] Basic route tests for end to end testing
+    - [ ] User Auth
+    - [ ] Admin User Services
+    - [ ] Base API Route
+- [x] Basic Backend CI/CD Workflow
+  - [x] Lint
+  - [x] Test w/ Coverage
+  - [x] Build CLI and API
 
 ### Mailer
 
