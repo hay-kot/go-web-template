@@ -21,8 +21,8 @@ type UserIn struct {
 // in the database. It should to create users from an API unless the user has
 // rights to create SuperUsers. For regular user in data use the UserIn struct.
 type UserCreate struct {
-	Name        string `json:"name,omitempty"`
-	Email       string `json:"email,omitempty"`
+	Name        string `json:"name"`
+	Email       string `json:"email"`
 	Password    string `json:"password"`
 	IsSuperuser bool   `json:"isSuperuser"`
 }

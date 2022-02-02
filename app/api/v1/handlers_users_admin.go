@@ -28,6 +28,10 @@ func (s *Handlersv1) HandleAdminUserGet() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id, err := strconv.Atoi(chi.URLParam(r, "id"))
 		if err != nil {
+			s.log.Debug(err.Error(), logger.Props{
+				"scope":   "admin",
+				"details": "failed to convert id to int",
+			})
 			server.RespondError(w, http.StatusBadRequest, err)
 			return
 		}

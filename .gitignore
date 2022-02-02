@@ -5,7 +5,7 @@ ent.db
 .idea
 .vscode
 
-
+.DS_Store
 test-mailer.json
 
 
