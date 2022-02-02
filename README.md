@@ -26,7 +26,7 @@ This Go Web Template is a simple starter template for a Go web application. It i
   - [Docker Setup](#docker-setup)
 - [Makefile](#makefile)
 - [How To Use: Application API](#how-to-use-application-api)
-  - [Package Structure](#package-structure)
+  - [Package Structure (Backend)](#package-structure-backend)
     - [app](#app)
     - [internal](#internal)
     - [pkgs](#pkgs)
@@ -200,7 +200,7 @@ mailer:
 
 ## How To Use: Application API
 
-### Package Structure
+### Package Structure (Backend)
 
 #### app
 
