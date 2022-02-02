@@ -3,6 +3,9 @@ name: Go Build/Test
 on:
   push:
     branches: [master]
+    paths:
+      - "**.go"
+      - "client/**/*.ts"
   pull_request:
     branches: [master]
 
