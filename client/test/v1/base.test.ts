@@ -1,6 +1,5 @@
 import request from "supertest";
-import assert from "assert";
-import { config } from "../config";
+import * as config from "../config";
 
 const api = request(config.BASE_URL);
 
