@@ -13,3 +13,8 @@ coverage:
 
 test:
 	cd backend && go test ./app/... ./internal/... ./pkgs/... -v
+
+
+test-client:
+	cd backend && go run ./app/api/ & sleep 5 && cd client && npm run test
+	pkill -SIGTERM api
