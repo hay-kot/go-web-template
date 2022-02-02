@@ -8,6 +8,9 @@ on:
       - "client/**/*.ts"
   pull_request:
     branches: [master]
+    paths:
+      - "**.go"
+      - "client/**/*.ts"
 
 jobs:
   go-test:
