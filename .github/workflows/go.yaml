@@ -3,11 +3,17 @@ name: Go Build/Test
 on:
   push:
     branches: [master]
+    paths:
+      - "**.go"
+      - "client/**/*.ts"
   pull_request:
     branches: [master]
+    paths:
+      - "**.go"
+      - "client/**/*.ts"
 
 jobs:
-  test:
+  go-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -27,4 +33,23 @@ jobs:
         run: make coverage
 
       - name: Upload coverage to Codecov
-        run: bash <(curl -s https://codecov.io/bash)
+        run: cd backend && bash <(curl -s https://codecov.io/bash)
+  end-to-end:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.17
+
+      - name: Build API
+        run: make build
+
+      - name: Setup Node
+        working-directory: ./client
+        run: npm install
+
+      - name: Test
+        run: make test-client

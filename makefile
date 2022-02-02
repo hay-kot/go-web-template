@@ -1,15 +1,22 @@
 
 build:
-	go build ./app/api/
+	cd backend && go build ./app/api/
 
 api:
-	go run ./app/api/
+	cd backend && go run ./app/api/
 
 cli:
-	go build -o manage ./app/cli 
+	cd backend && go build -o manage ./app/cli 
 
 coverage:
-	go test -race -coverprofile=coverage.out -covermode=atomic ./app/... ./internal/... ./pkgs/... -v -cover
+	cd backend && go test -race -coverprofile=coverage.out -covermode=atomic ./app/... ./internal/... ./pkgs/... -v -cover
 
 test:
-	go test ./app/... ./internal/... ./pkgs/... -v
+	cd backend && go test ./app/... ./internal/... ./pkgs/... -v
+
+
+test-client:
+	cd backend && go run ./app/api/ &
+	sleep 5
+	cd client && npm run test
+	
