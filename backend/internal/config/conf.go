@@ -27,7 +27,7 @@ type Config struct {
 }
 
 type WebConfig struct {
-	Port string `yaml:"port" conf:"default:3000"`
+	Port string `yaml:"port" conf:"default:7745"`
 	Host string `yaml:"host" conf:"default:127.0.0.1"`
 }
 
