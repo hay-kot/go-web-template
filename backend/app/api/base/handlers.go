@@ -44,3 +44,21 @@ func (h *Handlersv1) HandleBase(versions ...string) http.HandlerFunc {
 		}
 	}
 }
+
+type ReadyFunc func() bool
+
+func (h *Handlersv1) HandleReady(ready ReadyFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if ready() {
+			server.Respond(w, http.StatusOK, server.
+				Wrap("status", "available").
+				Message("The service is ready to use"),
+			)
+		} else {
+			server.Respond(w, http.StatusServiceUnavailable, server.
+				Wrap("status", "unavailable").
+				Message("The service is not ready to use"),
+			)
+		}
+	}
+}

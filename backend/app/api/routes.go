@@ -28,6 +28,7 @@ func (a *app) newRouter(repos *repo.AllRepos) *chi.Mux {
 
 	baseHandler := base.NewHandlerV1(a.logger, a.server)
 	r.Get(prefix, baseHandler.HandleBase("v1"))
+	r.Get(prefix+"/status", baseHandler.HandleReady(func() bool { return true }))
 
 	// =========================================================================
 	// API Version 1
