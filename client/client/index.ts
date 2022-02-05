@@ -1,11 +1,6 @@
 import { v1ApiClient } from "./v1client";
 import { IApiClient } from "./client";
 
-export function getClient(baseUrl: string, version = "v1"): IApiClient {
-  switch (version) {
-    case "v1":
-      return new v1ApiClient(baseUrl, version);
-    default:
-      throw new Error(`Unsupported version: ${version}`);
-  }
+export function getClientV1(baseUrl: string): v1ApiClient {
+  return new v1ApiClient(baseUrl, "v1");
 }

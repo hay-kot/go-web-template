@@ -12,7 +12,6 @@
     "test:watch": " TEST_SHUTDOWN_API_SERVER=false vitest --config ./test/vitest.config.ts"
   },
   "dependencies": {
-    "@types/supertest": "^2.0.11",
-    "cross-fetch": "^3.1.5"
+    "axios": "^0.25.0"
   }
 }
