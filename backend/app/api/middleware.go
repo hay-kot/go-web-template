@@ -67,7 +67,7 @@ func (a *app) mwAuthToken(next http.Handler) http.Handler {
 		}
 
 		// TODO: Attach the user to the request context
-		r = r.WithContext(context.WithValue(r.Context(), services.ContextUser, usr))
+		r = r.WithContext(context.WithValue(r.Context(), services.ContextUser, &usr))
 
 		next.ServeHTTP(w, r)
 	})
