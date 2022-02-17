@@ -2,6 +2,8 @@ package dtos
 
 import (
 	"errors"
+
+	"github.com/google/uuid"
 )
 
 var (
@@ -38,15 +40,15 @@ func (u *UserCreate) Validate() error {
 }
 
 type UserOut struct {
-	Id          int    `json:"id"`
-	Name        string `json:"name,omitempty"`
-	Email       string `json:"email,omitempty"`
-	Password    string `json:"-,omitempty"`
-	IsSuperuser bool   `json:"isSuperuser"`
+	Id          uuid.UUID `json:"id"`
+	Name        string    `json:"name,omitempty"`
+	Email       string    `json:"email,omitempty"`
+	Password    string    `json:"-"`
+	IsSuperuser bool      `json:"isSuperuser"`
 }
 
 type UserUpdate struct {
-	Id    int    `json:"id"`
-	Name  string `json:"name,omitempty"`
-	Email string `json:"email,omitempty"`
+	Id    uuid.UUID `json:"id"`
+	Name  string    `json:"name,omitempty"`
+	Email string    `json:"email,omitempty"`
 }
