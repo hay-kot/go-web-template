@@ -28,9 +28,7 @@ func TestMain(m *testing.M) {
 	}
 
 	testEntClient = client
-	testRepos = &AllRepos{
-		Users: NewUserRepositoryEnt(client),
-	}
+	testRepos = EntAllRepos(testEntClient)
 
 	defer client.Close()
 

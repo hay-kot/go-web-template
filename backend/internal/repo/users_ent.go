@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 
+	"github.com/google/uuid"
 	"github.com/hay-kot/git-web-template/backend/ent"
 	"github.com/hay-kot/git-web-template/backend/ent/user"
 	"github.com/hay-kot/git-web-template/backend/internal/dtos"
@@ -25,7 +26,7 @@ func NewUserRepositoryEnt(db *ent.Client) *EntUserRepository {
 	return &EntUserRepository{db: db}
 }
 
-func (e *EntUserRepository) GetOneId(id int, ctx context.Context) (dtos.UserOut, error) {
+func (e *EntUserRepository) GetOneId(id uuid.UUID, ctx context.Context) (dtos.UserOut, error) {
 	usr, err := e.db.User.Query().Where(user.ID(id)).Only(ctx)
 
 	usrOut := dtos.UserOut{}
@@ -97,7 +98,7 @@ func (e *EntUserRepository) Update(user *dtos.UserCreate, ctx context.Context) e
 	panic("implement me")
 }
 
-func (e *EntUserRepository) Delete(id int, ctx context.Context) error {
+func (e *EntUserRepository) Delete(id uuid.UUID, ctx context.Context) error {
 	_, err := e.db.User.Delete().Where(user.ID(id)).Exec(ctx)
 	return err
 }
