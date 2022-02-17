@@ -6,5 +6,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
+// AuthTokens is the predicate function for authtokens builders.
+type AuthTokens func(*sql.Selector)
+
 // User is the predicate function for user builders.
 type User func(*sql.Selector)

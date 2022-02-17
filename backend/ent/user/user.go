@@ -2,6 +2,10 @@
 
 package user
 
+import (
+	"github.com/google/uuid"
+)
+
 const (
 	// Label holds the string label denoting the user type in the database.
 	Label = "user"
@@ -15,8 +19,17 @@ const (
 	FieldPassword = "password"
 	// FieldIsSuperuser holds the string denoting the is_superuser field in the database.
 	FieldIsSuperuser = "is_superuser"
+	// EdgeAuthTokens holds the string denoting the auth_tokens edge name in mutations.
+	EdgeAuthTokens = "auth_tokens"
 	// Table holds the table name of the user in the database.
 	Table = "users"
+	// AuthTokensTable is the table that holds the auth_tokens relation/edge.
+	AuthTokensTable = "auth_tokens"
+	// AuthTokensInverseTable is the table name for the AuthTokens entity.
+	// It exists in this package in order to avoid circular dependency with the "authtokens" package.
+	AuthTokensInverseTable = "auth_tokens"
+	// AuthTokensColumn is the table column denoting the auth_tokens relation/edge.
+	AuthTokensColumn = "user_auth_tokens"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -47,4 +60,6 @@ var (
 	PasswordValidator func(string) error
 	// DefaultIsSuperuser holds the default value on creation for the "is_superuser" field.
 	DefaultIsSuperuser bool
+	// DefaultID holds the default value on creation for the "id" field.
+	DefaultID func() uuid.UUID
 )

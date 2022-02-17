@@ -8,9 +8,38 @@ import (
 )
 
 var (
+	// AuthTokensColumns holds the columns for the "auth_tokens" table.
+	AuthTokensColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "token", Type: field.TypeBytes, Unique: true},
+		{Name: "expires_at", Type: field.TypeTime},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "user_auth_tokens", Type: field.TypeUUID, Nullable: true},
+	}
+	// AuthTokensTable holds the schema information for the "auth_tokens" table.
+	AuthTokensTable = &schema.Table{
+		Name:       "auth_tokens",
+		Columns:    AuthTokensColumns,
+		PrimaryKey: []*schema.Column{AuthTokensColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "auth_tokens_users_auth_tokens",
+				Columns:    []*schema.Column{AuthTokensColumns[4]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "authtokens_token",
+				Unique:  false,
+				Columns: []*schema.Column{AuthTokensColumns[1]},
+			},
+		},
+	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "id", Type: field.TypeUUID},
 		{Name: "name", Type: field.TypeString},
 		{Name: "email", Type: field.TypeString, Unique: true},
 		{Name: "password", Type: field.TypeString},
@@ -24,9 +53,11 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		AuthTokensTable,
 		UsersTable,
 	}
 )
 
 func init() {
+	AuthTokensTable.ForeignKeys[0].RefTable = UsersTable
 }

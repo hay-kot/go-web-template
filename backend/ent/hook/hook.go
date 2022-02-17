@@ -9,6 +9,19 @@ import (
 	"github.com/hay-kot/git-web-template/backend/ent"
 )
 
+// The AuthTokensFunc type is an adapter to allow the use of ordinary
+// function as AuthTokens mutator.
+type AuthTokensFunc func(context.Context, *ent.AuthTokensMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AuthTokensFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.AuthTokensMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AuthTokensMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The UserFunc type is an adapter to allow the use of ordinary
 // function as User mutator.
 type UserFunc func(context.Context, *ent.UserMutation) (ent.Value, error)
