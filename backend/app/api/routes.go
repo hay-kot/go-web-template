@@ -37,6 +37,7 @@ func (a *app) newRouter(repos *repo.AllRepos) *chi.Mux {
 	r.Group(func(r chi.Router) {
 		r.Use(a.mwAuthToken)
 		r.Get(v1Base("/users/self"), v1Handlers.HandleUserSelf())
+		r.Post(v1Base("/users/logout"), v1Handlers.HandleAuthLogout())
 	})
 
 	r.Group(func(r chi.Router) {

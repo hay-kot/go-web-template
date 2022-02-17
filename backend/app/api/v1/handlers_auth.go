@@ -79,6 +79,27 @@ func (h *Handlersv1) HandleAuthLogin() http.HandlerFunc {
 	}
 }
 
+func (h *Handlersv1) HandleAuthLogout() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		token := services.UserTokenFromContext(r.Context())
+
+		if token == "" {
+			server.RespondError(w, http.StatusUnauthorized, errors.New("no token within request context"))
+			return
+		}
+
+		hash := hasher.HashToken(token)
+		err := h.repos.AuthTokens.DeleteToken(hash, r.Context())
+
+		if err != nil {
+			server.RespondError(w, http.StatusInternalServerError, err)
+			return
+		}
+
+		err = server.Respond(w, http.StatusOK, nil)
+	}
+}
+
 // handleAuthRefresh returns a handler that will issue a new token from an existing token.
 // This does not validate that the user still exists within the database.
 func (h *Handlersv1) HandleAuthRefresh() http.HandlerFunc {
