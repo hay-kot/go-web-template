@@ -68,10 +68,7 @@ func run(cfg *config.Config) error {
 	}
 
 	app.db = c
-
-	repos := &repo.AllRepos{
-		Users: repo.NewUserRepositoryEnt(app.db),
-	}
+	app.repos = repo.EntAllRepos(c)
 
 	// =========================================================================
 	// Start Server
@@ -80,10 +77,10 @@ func run(cfg *config.Config) error {
 
 	app.server = server.NewServer(app.conf.Web.Host, app.conf.Web.Port)
 
-	routes := app.newRouter(repos)
+	routes := app.newRouter(app.repos)
 	app.LogRoutes(routes)
 
-	app.SeedDatabase(repos)
+	app.SeedDatabase(app.repos)
 
 	app.logger.Info("Starting HTTP Server", logger.Props{
 		"host": app.server.Host,

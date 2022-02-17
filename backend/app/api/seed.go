@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 
+	"github.com/google/uuid"
 	"github.com/hay-kot/git-web-template/backend/internal/dtos"
 	"github.com/hay-kot/git-web-template/backend/internal/repo"
 	"github.com/hay-kot/git-web-template/backend/pkgs/hasher"
@@ -35,7 +36,7 @@ func (a *app) SeedDatabase(repos *repo.AllRepos) {
 			})
 		}
 
-		if usr.Id != 0 {
+		if usr.Id != uuid.Nil {
 			a.logger.Info("seed user already exists", logger.Props{
 				"user": user.Name,
 			})

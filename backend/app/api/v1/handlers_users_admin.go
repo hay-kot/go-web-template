@@ -2,9 +2,9 @@ package v1
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/google/uuid"
 	"github.com/hay-kot/git-web-template/backend/internal/dtos"
 	"github.com/hay-kot/git-web-template/backend/pkgs/hasher"
 	"github.com/hay-kot/git-web-template/backend/pkgs/logger"
@@ -26,17 +26,18 @@ func (s *Handlersv1) HandleAdminUserGetAll() http.HandlerFunc {
 
 func (s *Handlersv1) HandleAdminUserGet() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		id, err := strconv.Atoi(chi.URLParam(r, "id"))
+		uid, err := uuid.Parse(chi.URLParam(r, "id"))
+
 		if err != nil {
 			s.log.Debug(err.Error(), logger.Props{
 				"scope":   "admin",
-				"details": "failed to convert id to int",
+				"details": "failed to convert id to valid UUID",
 			})
 			server.RespondError(w, http.StatusBadRequest, err)
 			return
 		}
 
-		user, err := s.repos.Users.GetOneId(id, r.Context())
+		user, err := s.repos.Users.GetOneId(uid, r.Context())
 
 		if err != nil {
 			s.log.Error(err, nil)

@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/jwtauth/v5"
 	"github.com/hay-kot/git-web-template/backend/app/api/base"
 	v1 "github.com/hay-kot/git-web-template/backend/app/api/v1"
 	"github.com/hay-kot/git-web-template/backend/internal/repo"
@@ -33,17 +32,15 @@ func (a *app) newRouter(repos *repo.AllRepos) *chi.Mux {
 	// =========================================================================
 	// API Version 1
 
-	v1Base, v1Handlers := v1.NewHandlerV1(prefix, repos, a.jwt, a.logger)
+	v1Base, v1Handlers := v1.NewHandlerV1(prefix, repos, a.logger)
 	r.Post(v1Base("/login"), v1Handlers.HandleAuthLogin())
 	r.Group(func(r chi.Router) {
-		r.Use(jwtauth.Verifier(a.jwt))
-		r.Use(mwAuth)
+		r.Use(a.mwAuthToken)
 		r.Get(v1Base("/users/self"), v1Handlers.HandleUserSelf())
 	})
 
 	r.Group(func(r chi.Router) {
-		r.Use(jwtauth.Verifier(a.jwt))
-		r.Use(a.mwAdmin)
+		r.Use(a.mwAuthToken)
 		r.Get(v1Base("/admin/users"), v1Handlers.HandleAdminUserGetAll())
 		r.Post(v1Base("/admin/users"), v1Handlers.HandleAdminUserCreate())
 		r.Get(v1Base("/admin/users/{id}"), v1Handlers.HandleAdminUserGet())

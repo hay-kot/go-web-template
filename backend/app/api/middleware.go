@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strings"
@@ -8,11 +9,11 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"github.com/go-chi/jwtauth/v5"
 	"github.com/hay-kot/git-web-template/backend/internal/config"
+	"github.com/hay-kot/git-web-template/backend/internal/services"
+	"github.com/hay-kot/git-web-template/backend/pkgs/hasher"
 	"github.com/hay-kot/git-web-template/backend/pkgs/logger"
 	"github.com/hay-kot/git-web-template/backend/pkgs/server"
-	"github.com/lestrrat-go/jwx/jwt"
 )
 
 func (a *app) setGlobalMiddleware(r *chi.Mux) {
@@ -38,42 +39,36 @@ func (a *app) setGlobalMiddleware(r *chi.Mux) {
 	r.Use(middleware.Timeout(60 * time.Second))
 }
 
-// mwAuth is a middleware that will check the JWT token
-func mwAuth(next http.Handler) http.Handler {
+// mwAuthToken is a middleware that will check the database for a stateful token
+// and attach it to the request context with the user, or return a 401 if it doesn't exist.
+func (a *app) mwAuthToken(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		token, _, err := jwtauth.FromContext(r.Context())
+		requestToken := r.Header.Get("Authorization")
+
+		if requestToken == "" {
+			server.RespondUnauthorized(w)
+			return
+		}
+
+		requestToken = strings.TrimPrefix(requestToken, "Bearer ")
+
+		hash := hasher.HashToken(requestToken)
+
+		// Check the database for the token
+		usr, err := a.repos.AuthTokens.GetUserFromToken(hash, r.Context())
 
 		if err != nil {
+			a.logger.Error(err, logger.Props{
+				"token": requestToken,
+				"hash":  fmt.Sprintf("%x", hash),
+			})
 			server.RespondUnauthorized(w)
 			return
 		}
 
-		if token == nil || jwt.Validate(token) != nil {
-			server.RespondUnauthorized(w)
-			return
-		}
+		// TODO: Attach the user to the request context
+		r = r.WithContext(context.WithValue(r.Context(), services.ContextUser, usr))
 
-		// Token is authenticated, pass it through
-		next.ServeHTTP(w, r)
-	})
-}
-
-// mwAuth is a middleware that will check the JWT token
-func (a *app) mwAdmin(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		token, _, err := jwtauth.FromContext(r.Context())
-
-		if err != nil {
-			server.RespondUnauthorized(w)
-			return
-		}
-
-		if token == nil || jwt.Validate(token) != nil {
-			server.RespondUnauthorized(w)
-			return
-		}
-
-		// Token is authenticated, pass it through
 		next.ServeHTTP(w, r)
 	})
 }
