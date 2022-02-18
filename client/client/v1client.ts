@@ -13,10 +13,25 @@ export interface ApiSummary {
   message: string;
 }
 
+export interface ApiToken {
+  token: string;
+  expiresAt: string;
+}
+
+export interface UserSelf {
+  id: string;
+  name: string;
+  email: string;
+  isSuperuser: boolean;
+}
+
 export class v1ApiClient implements IApiClient {
   version: string;
   baseUrl: string;
   requests: Axios;
+
+  token: string;
+  expires: Date;
 
   constructor(baseUrl: string, version = "v1") {
     this.version = version;
@@ -26,11 +41,54 @@ export class v1ApiClient implements IApiClient {
     });
   }
 
+  v1(url: string) {
+    return `${this.baseUrl}/api/v1${url}`;
+  }
+
+  api(url: string) {
+    return `${this.baseUrl}/api${url}`;
+  }
+
+  setToken(token: string, expires: Date) {
+    this.token = token;
+    this.expires = expires;
+
+    this.requests.defaults.headers.common["Authorization"] = token;
+  }
+
+  async login(username: string, password: string) {
+    const response = await this.requests.post<ApiToken>(
+      this.v1("/users/login"),
+      {
+        username,
+        password,
+      }
+    );
+
+    this.setToken(response.data.token, new Date(response.data.expiresAt));
+
+    return response;
+  }
+
+  async logout() {
+    const response = await this.requests.post<any>(this.v1("/users/logout"));
+
+    if (response.status === 200) {
+      this.setToken("", new Date());
+    }
+
+    return response;
+  }
+
+  async self() {
+    return this.requests.get<UserSelf>(this.v1("/users/self"));
+  }
+
   async status() {
-    return this.requests.get<Status>(`${this.baseUrl}/api/status`);
+    return this.requests.get<Status>(this.api("/status"));
   }
 
   async summary() {
-    return this.requests.get<ApiSummary>(`${this.baseUrl}/api`);
+    return this.requests.get<ApiSummary>(this.api(""));
   }
 }
