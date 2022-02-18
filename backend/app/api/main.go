@@ -80,6 +80,7 @@ func run(cfg *config.Config) error {
 	routes := app.newRouter(app.repos)
 	app.LogRoutes(routes)
 
+	app.EnsureAdministrator()
 	app.SeedDatabase(app.repos)
 
 	app.logger.Info("Starting HTTP Server", logger.Props{

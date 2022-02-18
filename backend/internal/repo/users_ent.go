@@ -107,3 +107,21 @@ func (e *EntUserRepository) DeleteAll(ctx context.Context) error {
 	_, err := e.db.User.Delete().Exec(ctx)
 	return err
 }
+
+func (e *EntUserRepository) GetSuperusers(ctx context.Context) ([]dtos.UserOut, error) {
+	users, err := e.db.User.Query().Where(user.IsSuperuser(true)).All(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var usrs []dtos.UserOut
+
+	for _, usr := range users {
+		usrOut := dtos.UserOut{}
+		e.toUserOut(&usrOut, usr)
+		usrs = append(usrs, usrOut)
+	}
+
+	return usrs, nil
+}

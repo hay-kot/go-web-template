@@ -15,3 +15,14 @@ mailer:
   username:
   password:
   from: example@email.com
+seed:
+  enabled: true
+  users:
+    - name: Admin
+      email: admin@admin.com
+      password: admin
+      isSuperuser: true
+    - name: User
+      email: user@user.com
+      password: user
+      isSuperuser: false

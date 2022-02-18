@@ -14,6 +14,8 @@ type UserRepository interface {
 	GetOneEmail(email string, ctx context.Context) (dtos.UserOut, error)
 	// GetAll returns all users
 	GetAll(ctx context.Context) ([]dtos.UserOut, error)
+	// Get Super Users
+	GetSuperusers(ctx context.Context) ([]dtos.UserOut, error)
 	// Create creates a new user
 	Create(user *dtos.UserCreate, ctx context.Context) (dtos.UserOut, error)
 	// Update updates a user
