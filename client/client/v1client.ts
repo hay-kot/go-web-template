@@ -1,4 +1,3 @@
-import { IApiClient } from "./client";
 import axios, { Axios } from "axios";
 
 interface Status {
@@ -25,7 +24,7 @@ export interface UserSelf {
   isSuperuser: boolean;
 }
 
-export class v1ApiClient implements IApiClient {
+export class v1ApiClient {
   version: string;
   baseUrl: string;
   requests: Axios;
