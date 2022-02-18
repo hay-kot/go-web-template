@@ -16,7 +16,7 @@ const (
 	DefaultPassword = "admin"
 )
 
-// EnsureAdministartor ensures that there is at least one superuser in the database
+// EnsureAdministrator ensures that there is at least one superuser in the database
 // if one isn't found a default is generate using the default credentials
 func (a *app) EnsureAdministrator() {
 	superusers, err := a.repos.Users.GetSuperusers(context.Background())
