@@ -14,7 +14,6 @@ This Go Web Template is a simple starter template for a Go web application. It i
   - [General](#general)
   - [Mailer](#mailer)
   - [Admin / Superuser Management](#admin--superuser-management)
-  - [User Services](#user-services)
     - [Admin](#admin)
     - [Self Service](#self-service)
   - [Logging](#logging)
@@ -44,12 +43,12 @@ This Go Web Template is a simple starter template for a Go web application. It i
 
 - [ ] Test Coverage (WIP)
 - [ ] End to End Testing Framework
-  - [ ] Build with TS for ready to go frontend client
+  - [x] Build with TS for ready to go frontend client
   - [x] Github CI for end to end testing
   - [ ] Basic route tests for end to end testing
-    - [ ] User Auth
+    - [x] User Auth
     - [ ] Admin User Services
-    - [ ] Base API Route
+    - [x] Base API Route
 - [x] Basic Backend CI/CD Workflow
   - [x] Lint
   - [x] Test w/ Coverage
@@ -60,17 +59,13 @@ This Go Web Template is a simple starter template for a Go web application. It i
 
 ### Mailer
 
-- [ ] Mailer classes for easy email sending
+- [ ] Mailer builder for easy email sending
 - [x] Starter email templates
   - [x] Activate Account
   - [ ] Password Reset
 - [ ] Bulk Messages
 
 ### Admin / Superuser Management
-
-### User Services
-
-- [ ] User password hashing
 
 #### Admin
 
@@ -109,11 +104,11 @@ This Go Web Template is a simple starter template for a Go web application. It i
 ### Web Server
 
 - [x] Router agnostic
+- [x] Background Tasks
+- [ ] Limited Worker Pool
 - [x] Graceful shutdown
   - [x] Finish HTTP requests with timeout
   - [x] Finish background tasks (no timeout)
-- [x] Background Tasks
-- [ ] Limited Worker Pool
 - [x] Response Helpers
   - [x] Error response builder
   - [x] Utility responses
