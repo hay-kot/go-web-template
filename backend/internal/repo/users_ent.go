@@ -21,11 +21,6 @@ func (e *EntUserRepository) toUserOut(usr *dtos.UserOut, entUsr *ent.User) {
 	usr.IsSuperuser = entUsr.IsSuperuser
 }
 
-// NewEntUserRepository returns a new instance of the EntUserRepository that relies on the given *ent.Client.
-func NewUserRepositoryEnt(db *ent.Client) *EntUserRepository {
-	return &EntUserRepository{db: db}
-}
-
 func (e *EntUserRepository) GetOneId(id uuid.UUID, ctx context.Context) (dtos.UserOut, error) {
 	usr, err := e.db.User.Query().Where(user.ID(id)).Only(ctx)
 
