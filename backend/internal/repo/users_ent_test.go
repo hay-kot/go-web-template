@@ -35,7 +35,7 @@ func Test_EntUserRepo_GetOneEmail(t *testing.T) {
 	assert.Equal(user.Name, foundUser.Name)
 
 	// Cleanup
-	testRepos.Users.Delete(foundUser.Id, ctx)
+	testRepos.Users.DeleteAll(ctx)
 }
 
 func Test_EntUserRepo_GetOneId(t *testing.T) {
@@ -52,7 +52,7 @@ func Test_EntUserRepo_GetOneId(t *testing.T) {
 	assert.Equal(user.Name, foundUser.Name)
 
 	// Cleanup
-	testRepos.Users.Delete(userOut.Id, ctx)
+	testRepos.Users.DeleteAll(ctx)
 }
 
 func Test_EntUserRepo_GetAll(t *testing.T) {
@@ -87,6 +87,9 @@ func Test_EntUserRepo_GetAll(t *testing.T) {
 	for _, usr := range created {
 		testRepos.Users.Delete(usr.Id, ctx)
 	}
+
+	// Cleanup
+	testRepos.Users.DeleteAll(ctx)
 }
 
 func Test_EntUserRepo_Update(t *testing.T) {
@@ -139,4 +142,7 @@ func Test_EntUserRepo_GetSuperusers(t *testing.T) {
 	for _, usr := range superUsers {
 		assert.True(t, usr.IsSuperuser)
 	}
+
+	// Cleanup
+	testRepos.Users.DeleteAll(ctx)
 }
