@@ -4,8 +4,6 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/base32"
-
-	"golang.org/x/crypto/bcrypt"
 )
 
 type Token struct {
@@ -29,9 +27,4 @@ func GenerateToken() Token {
 func HashToken(plainTextToken string) []byte {
 	hash := sha256.Sum256([]byte(plainTextToken))
 	return hash[:]
-}
-
-func CheckTokenHash(token, hash string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(token))
-	return err == nil
 }
