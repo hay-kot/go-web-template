@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"time"
 
 	"github.com/hay-kot/git-web-template/backend/ent"
 	"github.com/hay-kot/git-web-template/backend/internal/config"
@@ -86,6 +87,13 @@ func run(cfg *config.Config) error {
 	app.logger.Info("Starting HTTP Server", logger.Props{
 		"host": app.server.Host,
 		"port": app.server.Port,
+	})
+
+	// =========================================================================
+	// Start Reoccurring Tasks
+
+	go app.StartReoccurringTasks(time.Duration(24)*time.Hour, func() {
+		app.repos.AuthTokens.PurgeExpiredTokens(context.Background())
 	})
 
 	return app.server.Start(routes)
