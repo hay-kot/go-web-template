@@ -6,6 +6,7 @@ import (
 	"os"
 	"text/tabwriter"
 
+	"github.com/google/uuid"
 	"github.com/hay-kot/git-web-template/backend/internal/dtos"
 	"github.com/hay-kot/git-web-template/backend/pkgs/hasher"
 	"github.com/urfave/cli/v2"
@@ -44,9 +45,10 @@ func (a *app) UserCreate(c *cli.Context) error {
 
 func (a *app) UserDelete(c *cli.Context) error {
 	// Get Flags
-	id := c.Int("id")
+	id := c.String("id")
+	uid := uuid.MustParse(id)
 
-	fmt.Printf("Deleting user with id: %d\n", id)
+	fmt.Printf("Deleting user with id: %s\n", id)
 
 	// Confirm Action
 	fmt.Printf("Are you sure you want to delete this user? (y/n) ")
@@ -57,7 +59,7 @@ func (a *app) UserDelete(c *cli.Context) error {
 		return nil
 	}
 
-	err = a.repos.Users.Delete(id, context.Background())
+	err = a.repos.Users.Delete(uid, context.Background())
 
 	if err == nil {
 		fmt.Printf("%v User(s) deleted (id=%v)\n", 1, id)

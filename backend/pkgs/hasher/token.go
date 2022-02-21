@@ -1,18 +1,30 @@
 package hasher
 
-import "golang.org/x/crypto/bcrypt"
+import (
+	"crypto/rand"
+	"crypto/sha256"
+	"encoding/base32"
+)
 
-func NewToken() string {
-	s, _ := GenerateRandomString(32)
-	return s
+type Token struct {
+	Raw  string
+	Hash []byte
 }
 
-func HashToken(token string) (string, error) {
-	bytes, err := bcrypt.GenerateFromPassword([]byte(token), bcrypt.DefaultCost)
-	return string(bytes), err
+func GenerateToken() Token {
+	randomBytes := make([]byte, 16)
+	rand.Read(randomBytes)
+
+	plainText := base32.StdEncoding.WithPadding(base32.NoPadding).EncodeToString(randomBytes)
+	hash := HashToken(plainText)
+
+	return Token{
+		Raw:  plainText,
+		Hash: hash,
+	}
 }
 
-func CheckTokenHash(token, hash string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(token))
-	return err == nil
+func HashToken(plainTextToken string) []byte {
+	hash := sha256.Sum256([]byte(plainTextToken))
+	return hash[:]
 }

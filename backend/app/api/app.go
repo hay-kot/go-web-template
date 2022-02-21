@@ -1,9 +1,11 @@
 package main
 
 import (
-	"github.com/go-chi/jwtauth/v5"
+	"time"
+
 	"github.com/hay-kot/git-web-template/backend/ent"
 	"github.com/hay-kot/git-web-template/backend/internal/config"
+	"github.com/hay-kot/git-web-template/backend/internal/repo"
 	"github.com/hay-kot/git-web-template/backend/pkgs/logger"
 	"github.com/hay-kot/git-web-template/backend/pkgs/mailer"
 	"github.com/hay-kot/git-web-template/backend/pkgs/server"
@@ -13,17 +15,15 @@ type app struct {
 	conf   *config.Config
 	logger *logger.Logger
 	mailer mailer.Mailer
-	jwt    *jwtauth.JWTAuth
 	db     *ent.Client
 	server *server.Server
+	repos  *repo.AllRepos
 }
 
 func NewApp(conf *config.Config) *app {
 	s := &app{
 		conf: conf,
 	}
-
-	s.jwt = jwtauth.New("HS256", []byte("secret"), nil)
 
 	s.mailer = mailer.Mailer{
 		Host:     s.conf.Mailer.Host,
@@ -34,4 +34,11 @@ func NewApp(conf *config.Config) *app {
 	}
 
 	return s
+}
+
+func (a *app) StartReoccurringTasks(t time.Duration, fn func()) {
+	for {
+		a.server.Background(fn)
+		time.Sleep(t)
+	}
 }

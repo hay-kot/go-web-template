@@ -35,7 +35,7 @@ func Test_EntUserRepo_GetOneEmail(t *testing.T) {
 	assert.Equal(user.Name, foundUser.Name)
 
 	// Cleanup
-	testRepos.Users.Delete(foundUser.Id, ctx)
+	testRepos.Users.DeleteAll(ctx)
 }
 
 func Test_EntUserRepo_GetOneId(t *testing.T) {
@@ -52,7 +52,7 @@ func Test_EntUserRepo_GetOneId(t *testing.T) {
 	assert.Equal(user.Name, foundUser.Name)
 
 	// Cleanup
-	testRepos.Users.Delete(userOut.Id, ctx)
+	testRepos.Users.DeleteAll(ctx)
 }
 
 func Test_EntUserRepo_GetAll(t *testing.T) {
@@ -87,6 +87,9 @@ func Test_EntUserRepo_GetAll(t *testing.T) {
 	for _, usr := range created {
 		testRepos.Users.Delete(usr.Id, ctx)
 	}
+
+	// Cleanup
+	testRepos.Users.DeleteAll(ctx)
 }
 
 func Test_EntUserRepo_Update(t *testing.T) {
@@ -111,4 +114,35 @@ func Test_EntUserRepo_Delete(t *testing.T) {
 	allUsers, _ = testRepos.Users.GetAll(ctx)
 	assert.Equal(t, len(allUsers), 0)
 
+}
+
+func Test_EntUserRepo_GetSuperusers(t *testing.T) {
+	// Create 10 Users
+	superuser := 0
+	users := 0
+
+	for i := 0; i < 10; i++ {
+		user := UserFactory()
+		ctx := context.Background()
+		_, _ = testRepos.Users.Create(&user, ctx)
+
+		if user.IsSuperuser {
+			superuser++
+		} else {
+			users++
+		}
+	}
+
+	// Delete all
+	ctx := context.Background()
+
+	superUsers, err := testRepos.Users.GetSuperusers(ctx)
+	assert.NoError(t, err)
+
+	for _, usr := range superUsers {
+		assert.True(t, usr.IsSuperuser)
+	}
+
+	// Cleanup
+	testRepos.Users.DeleteAll(ctx)
 }

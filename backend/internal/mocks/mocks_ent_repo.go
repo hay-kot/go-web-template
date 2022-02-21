@@ -18,6 +18,5 @@ func GetEntRepos() (*repo.AllRepos, func() error) {
 		panic(err)
 	}
 
-	return &repo.AllRepos{Users: repo.NewUserRepositoryEnt(c)}, c.Close
-
+	return repo.EntAllRepos(c), c.Close
 }

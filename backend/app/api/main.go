@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"time"
 
 	"github.com/hay-kot/git-web-template/backend/ent"
 	"github.com/hay-kot/git-web-template/backend/internal/config"
@@ -68,10 +69,7 @@ func run(cfg *config.Config) error {
 	}
 
 	app.db = c
-
-	repos := &repo.AllRepos{
-		Users: repo.NewUserRepositoryEnt(app.db),
-	}
+	app.repos = repo.EntAllRepos(c)
 
 	// =========================================================================
 	// Start Server
@@ -80,14 +78,22 @@ func run(cfg *config.Config) error {
 
 	app.server = server.NewServer(app.conf.Web.Host, app.conf.Web.Port)
 
-	routes := app.newRouter(repos)
+	routes := app.newRouter(app.repos)
 	app.LogRoutes(routes)
 
-	app.SeedDatabase(repos)
+	app.EnsureAdministrator()
+	app.SeedDatabase(app.repos)
 
 	app.logger.Info("Starting HTTP Server", logger.Props{
 		"host": app.server.Host,
 		"port": app.server.Port,
+	})
+
+	// =========================================================================
+	// Start Reoccurring Tasks
+
+	go app.StartReoccurringTasks(time.Duration(24)*time.Hour, func() {
+		app.repos.AuthTokens.PurgeExpiredTokens(context.Background())
 	})
 
 	return app.server.Start(routes)

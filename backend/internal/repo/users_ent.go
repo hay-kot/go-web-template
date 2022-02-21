@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 
+	"github.com/google/uuid"
 	"github.com/hay-kot/git-web-template/backend/ent"
 	"github.com/hay-kot/git-web-template/backend/ent/user"
 	"github.com/hay-kot/git-web-template/backend/internal/dtos"
@@ -20,12 +21,7 @@ func (e *EntUserRepository) toUserOut(usr *dtos.UserOut, entUsr *ent.User) {
 	usr.IsSuperuser = entUsr.IsSuperuser
 }
 
-// NewEntUserRepository returns a new instance of the EntUserRepository that relies on the given *ent.Client.
-func NewUserRepositoryEnt(db *ent.Client) *EntUserRepository {
-	return &EntUserRepository{db: db}
-}
-
-func (e *EntUserRepository) GetOneId(id int, ctx context.Context) (dtos.UserOut, error) {
+func (e *EntUserRepository) GetOneId(id uuid.UUID, ctx context.Context) (dtos.UserOut, error) {
 	usr, err := e.db.User.Query().Where(user.ID(id)).Only(ctx)
 
 	usrOut := dtos.UserOut{}
@@ -97,7 +93,7 @@ func (e *EntUserRepository) Update(user *dtos.UserCreate, ctx context.Context) e
 	panic("implement me")
 }
 
-func (e *EntUserRepository) Delete(id int, ctx context.Context) error {
+func (e *EntUserRepository) Delete(id uuid.UUID, ctx context.Context) error {
 	_, err := e.db.User.Delete().Where(user.ID(id)).Exec(ctx)
 	return err
 }
@@ -105,4 +101,22 @@ func (e *EntUserRepository) Delete(id int, ctx context.Context) error {
 func (e *EntUserRepository) DeleteAll(ctx context.Context) error {
 	_, err := e.db.User.Delete().Exec(ctx)
 	return err
+}
+
+func (e *EntUserRepository) GetSuperusers(ctx context.Context) ([]dtos.UserOut, error) {
+	users, err := e.db.User.Query().Where(user.IsSuperuser(true)).All(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var usrs []dtos.UserOut
+
+	for _, usr := range users {
+		usrOut := dtos.UserOut{}
+		e.toUserOut(&usrOut, usr)
+		usrs = append(usrs, usrOut)
+	}
+
+	return usrs, nil
 }

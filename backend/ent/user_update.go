@@ -4,11 +4,13 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/hay-kot/git-web-template/backend/ent/authtokens"
 	"github.com/hay-kot/git-web-template/backend/ent/predicate"
 	"github.com/hay-kot/git-web-template/backend/ent/user"
 )
@@ -58,9 +60,45 @@ func (uu *UserUpdate) SetNillableIsSuperuser(b *bool) *UserUpdate {
 	return uu
 }
 
+// AddAuthTokenIDs adds the "auth_tokens" edge to the AuthTokens entity by IDs.
+func (uu *UserUpdate) AddAuthTokenIDs(ids ...int) *UserUpdate {
+	uu.mutation.AddAuthTokenIDs(ids...)
+	return uu
+}
+
+// AddAuthTokens adds the "auth_tokens" edges to the AuthTokens entity.
+func (uu *UserUpdate) AddAuthTokens(a ...*AuthTokens) *UserUpdate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uu.AddAuthTokenIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
+}
+
+// ClearAuthTokens clears all "auth_tokens" edges to the AuthTokens entity.
+func (uu *UserUpdate) ClearAuthTokens() *UserUpdate {
+	uu.mutation.ClearAuthTokens()
+	return uu
+}
+
+// RemoveAuthTokenIDs removes the "auth_tokens" edge to AuthTokens entities by IDs.
+func (uu *UserUpdate) RemoveAuthTokenIDs(ids ...int) *UserUpdate {
+	uu.mutation.RemoveAuthTokenIDs(ids...)
+	return uu
+}
+
+// RemoveAuthTokens removes "auth_tokens" edges to AuthTokens entities.
+func (uu *UserUpdate) RemoveAuthTokens(a ...*AuthTokens) *UserUpdate {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uu.RemoveAuthTokenIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -127,17 +165,17 @@ func (uu *UserUpdate) ExecX(ctx context.Context) {
 func (uu *UserUpdate) check() error {
 	if v, ok := uu.mutation.Name(); ok {
 		if err := user.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "User.name": %w`, err)}
 		}
 	}
 	if v, ok := uu.mutation.Email(); ok {
 		if err := user.EmailValidator(v); err != nil {
-			return &ValidationError{Name: "email", err: fmt.Errorf("ent: validator failed for field \"email\": %w", err)}
+			return &ValidationError{Name: "email", err: fmt.Errorf(`ent: validator failed for field "User.email": %w`, err)}
 		}
 	}
 	if v, ok := uu.mutation.Password(); ok {
 		if err := user.PasswordValidator(v); err != nil {
-			return &ValidationError{Name: "password", err: fmt.Errorf("ent: validator failed for field \"password\": %w", err)}
+			return &ValidationError{Name: "password", err: fmt.Errorf(`ent: validator failed for field "User.password": %w`, err)}
 		}
 	}
 	return nil
@@ -149,7 +187,7 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Table:   user.Table,
 			Columns: user.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: user.FieldID,
 			},
 		},
@@ -188,6 +226,60 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Value:  value,
 			Column: user.FieldIsSuperuser,
 		})
+	}
+	if uu.mutation.AuthTokensCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AuthTokensTable,
+			Columns: []string{user.AuthTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: authtokens.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedAuthTokensIDs(); len(nodes) > 0 && !uu.mutation.AuthTokensCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AuthTokensTable,
+			Columns: []string{user.AuthTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: authtokens.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.AuthTokensIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AuthTokensTable,
+			Columns: []string{user.AuthTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: authtokens.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -240,9 +332,45 @@ func (uuo *UserUpdateOne) SetNillableIsSuperuser(b *bool) *UserUpdateOne {
 	return uuo
 }
 
+// AddAuthTokenIDs adds the "auth_tokens" edge to the AuthTokens entity by IDs.
+func (uuo *UserUpdateOne) AddAuthTokenIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.AddAuthTokenIDs(ids...)
+	return uuo
+}
+
+// AddAuthTokens adds the "auth_tokens" edges to the AuthTokens entity.
+func (uuo *UserUpdateOne) AddAuthTokens(a ...*AuthTokens) *UserUpdateOne {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uuo.AddAuthTokenIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
+}
+
+// ClearAuthTokens clears all "auth_tokens" edges to the AuthTokens entity.
+func (uuo *UserUpdateOne) ClearAuthTokens() *UserUpdateOne {
+	uuo.mutation.ClearAuthTokens()
+	return uuo
+}
+
+// RemoveAuthTokenIDs removes the "auth_tokens" edge to AuthTokens entities by IDs.
+func (uuo *UserUpdateOne) RemoveAuthTokenIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.RemoveAuthTokenIDs(ids...)
+	return uuo
+}
+
+// RemoveAuthTokens removes "auth_tokens" edges to AuthTokens entities.
+func (uuo *UserUpdateOne) RemoveAuthTokens(a ...*AuthTokens) *UserUpdateOne {
+	ids := make([]int, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return uuo.RemoveAuthTokenIDs(ids...)
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
@@ -316,17 +444,17 @@ func (uuo *UserUpdateOne) ExecX(ctx context.Context) {
 func (uuo *UserUpdateOne) check() error {
 	if v, ok := uuo.mutation.Name(); ok {
 		if err := user.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
+			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "User.name": %w`, err)}
 		}
 	}
 	if v, ok := uuo.mutation.Email(); ok {
 		if err := user.EmailValidator(v); err != nil {
-			return &ValidationError{Name: "email", err: fmt.Errorf("ent: validator failed for field \"email\": %w", err)}
+			return &ValidationError{Name: "email", err: fmt.Errorf(`ent: validator failed for field "User.email": %w`, err)}
 		}
 	}
 	if v, ok := uuo.mutation.Password(); ok {
 		if err := user.PasswordValidator(v); err != nil {
-			return &ValidationError{Name: "password", err: fmt.Errorf("ent: validator failed for field \"password\": %w", err)}
+			return &ValidationError{Name: "password", err: fmt.Errorf(`ent: validator failed for field "User.password": %w`, err)}
 		}
 	}
 	return nil
@@ -338,14 +466,14 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Table:   user.Table,
 			Columns: user.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt,
+				Type:   field.TypeUUID,
 				Column: user.FieldID,
 			},
 		},
 	}
 	id, ok := uuo.mutation.ID()
 	if !ok {
-		return nil, &ValidationError{Name: "ID", err: fmt.Errorf("missing User.ID for update")}
+		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "User.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
 	if fields := uuo.fields; len(fields) > 0 {
@@ -394,6 +522,60 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Value:  value,
 			Column: user.FieldIsSuperuser,
 		})
+	}
+	if uuo.mutation.AuthTokensCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AuthTokensTable,
+			Columns: []string{user.AuthTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: authtokens.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedAuthTokensIDs(); len(nodes) > 0 && !uuo.mutation.AuthTokensCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AuthTokensTable,
+			Columns: []string{user.AuthTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: authtokens.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.AuthTokensIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.AuthTokensTable,
+			Columns: []string{user.AuthTokensColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeInt,
+					Column: authtokens.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &User{config: uuo.config}
 	_spec.Assign = _node.assignValues

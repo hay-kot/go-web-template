@@ -1,25 +1,23 @@
 package v1
 
 import (
+	"errors"
 	"net/http"
 
-	"github.com/go-chi/jwtauth/v5"
+	"github.com/hay-kot/git-web-template/backend/internal/services"
 	"github.com/hay-kot/git-web-template/backend/pkgs/server"
 )
 
 func (s *Handlersv1) HandleUserSelf() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		_, claims, _ := jwtauth.FromContext(r.Context())
-		username := claims["username"].(string)
+		usr := services.UserFromContext(r.Context())
 
-		usr, err := s.repos.Users.GetOneEmail(username, r.Context())
-
-		if err != nil {
-			s.log.Error(err, nil)
+		if usr == nil {
+			s.log.Error(errors.New("no user within request context"), nil)
 			server.RespondInternalServerError(w)
+			return
 		}
 
-		// Return Username
 		_ = server.Respond(w, http.StatusOK, usr)
 	}
 }

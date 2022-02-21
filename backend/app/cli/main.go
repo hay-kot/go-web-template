@@ -44,9 +44,7 @@ func run(cfg *config.Config) error {
 
 	// Create App
 	a := &app{
-		repos: &repo.AllRepos{
-			Users: repo.NewUserRepositoryEnt(c),
-		},
+		repos: repo.EntAllRepos(c),
 	}
 
 	app := &cli.App{
