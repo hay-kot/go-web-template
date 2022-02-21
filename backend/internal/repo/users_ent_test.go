@@ -112,3 +112,31 @@ func Test_EntUserRepo_Delete(t *testing.T) {
 	assert.Equal(t, len(allUsers), 0)
 
 }
+
+func Test_EntUserRepo_GetSuperusers(t *testing.T) {
+	// Create 10 Users
+	superuser := 0
+	users := 0
+
+	for i := 0; i < 10; i++ {
+		user := UserFactory()
+		ctx := context.Background()
+		_, _ = testRepos.Users.Create(&user, ctx)
+
+		if user.IsSuperuser {
+			superuser++
+		} else {
+			users++
+		}
+	}
+
+	// Delete all
+	ctx := context.Background()
+
+	superUsers, err := testRepos.Users.GetSuperusers(ctx)
+	assert.NoError(t, err)
+
+	for _, usr := range superUsers {
+		assert.True(t, usr.IsSuperuser)
+	}
+}
