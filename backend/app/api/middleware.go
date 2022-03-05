@@ -18,7 +18,6 @@ import (
 func (a *app) setGlobalMiddleware(r *chi.Mux) {
 	// =========================================================================
 	// Middleware
-	// A good base middleware stack
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
 	r.Use(mwStripTrailingSlash)
@@ -95,7 +94,6 @@ func (a *app) mwStructLogger(next http.Handler) http.Handler {
 			"remote": r.RemoteAddr,
 		})
 
-		// Do stuff here
 		next.ServeHTTP(w, r)
 	})
 }
