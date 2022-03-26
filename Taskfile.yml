@@ -1,0 +1,44 @@
+version: "3"
+
+tasks:
+  cli:
+    cmds:
+      - cd backend && go run ./app/cli/ {{.CLI_ARGS}}
+    silent: false
+
+  cli:build:
+    cmds:
+      - cd backend && go build ./app/cli/
+    silent: false
+
+  api:
+    cmds:
+      - cd backend && go run ./app/api/ {{.CLI_ARGS}}
+    silent: true
+
+  api:build:
+    cmds:
+      - cd backend && go build ./app/api/
+    silent: true
+
+  api:test:
+    cmds:
+      - cd backend && go test ./app/api/
+    silent: true
+
+  api:coverage:
+    cmds:
+      - cd backend && go test -race -coverprofile=coverage.out -covermode=atomic ./app/... ./internal/... ./pkgs/... -v -cover
+    silent: true
+
+  client:test:
+    cmds:
+      - cd backend && go run ./app/api/ &
+      - sleep 5
+      - cd client && npm run test:ci
+    silent: true
+
+  docker:build:
+    cmds:
+      - cd backend && docker-compose up --build
+    silent: true
