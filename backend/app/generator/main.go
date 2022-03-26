@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/hay-kot/git-web-template/backend/ent"
-	"github.com/hay-kot/git-web-template/backend/internal/dtos"
+	"github.com/hay-kot/git-web-template/backend/internal/types"
 	"github.com/hay-kot/git-web-template/backend/pkgs/automapper"
 )
 
@@ -14,8 +14,8 @@ func getMappers() []automapper.AutoMapper {
 			Prefix:  "users",
 			Name:    "User Out",
 			Schema: automapper.Schema{
-				Type:   dtos.UserOut{},
-				Prefix: "dtos",
+				Type:   types.UserOut{},
+				Prefix: "types",
 			},
 			Model: automapper.Model{
 				Type:   ent.User{},

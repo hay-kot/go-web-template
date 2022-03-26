@@ -9,9 +9,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/hay-kot/git-web-template/backend/internal/dtos"
 	"github.com/hay-kot/git-web-template/backend/internal/mocks/chimocker"
 	"github.com/hay-kot/git-web-template/backend/internal/mocks/factories"
+	"github.com/hay-kot/git-web-template/backend/internal/types"
 	"github.com/hay-kot/git-web-template/backend/pkgs/server"
 	"github.com/stretchr/testify/assert"
 )
@@ -23,11 +23,11 @@ const (
 )
 
 type usersResponse struct {
-	Users []dtos.UserOut `json:"users"`
+	Users []types.UserOut `json:"users"`
 }
 
 type userResponse struct {
-	User dtos.UserOut `json:"user"`
+	User types.UserOut `json:"user"`
 }
 
 func Test_HandleAdminUserGetAll_Success(t *testing.T) {
@@ -37,7 +37,7 @@ func Test_HandleAdminUserGetAll_Success(t *testing.T) {
 	mockHandler.HandleAdminUserGetAll()(r, req)
 
 	response := usersResponse{
-		Users: []dtos.UserOut{},
+		Users: []types.UserOut{},
 	}
 
 	_ = json.Unmarshal(r.Body.Bytes(), &response)
@@ -68,7 +68,7 @@ func Test_HandleAdminUserGet_Success(t *testing.T) {
 	assert.Equal(t, http.StatusOK, res.Code)
 
 	response := userResponse{
-		User: dtos.UserOut{},
+		User: types.UserOut{},
 	}
 
 	_ = json.Unmarshal(res.Body.Bytes(), &response)

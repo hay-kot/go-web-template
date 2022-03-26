@@ -6,8 +6,8 @@ import (
 
 	"github.com/hay-kot/git-web-template/backend/ent"
 	"github.com/hay-kot/git-web-template/backend/ent/authtokens"
-	"github.com/hay-kot/git-web-template/backend/internal/dtos"
 	"github.com/hay-kot/git-web-template/backend/internal/mapper"
+	"github.com/hay-kot/git-web-template/backend/internal/types"
 )
 
 type EntTokenRepository struct {
@@ -15,7 +15,7 @@ type EntTokenRepository struct {
 }
 
 // GetUserFromToken get's a user from a token
-func (r *EntTokenRepository) GetUserFromToken(token []byte, ctx context.Context) (dtos.UserOut, error) {
+func (r *EntTokenRepository) GetUserFromToken(token []byte, ctx context.Context) (types.UserOut, error) {
 	dbToken, err := r.db.AuthTokens.Query().
 		Where(authtokens.Token(token)).
 		Where(authtokens.ExpiresAtGTE(time.Now())).
@@ -23,15 +23,15 @@ func (r *EntTokenRepository) GetUserFromToken(token []byte, ctx context.Context)
 		Only(ctx)
 
 	if err != nil {
-		return dtos.UserOut{}, err
+		return types.UserOut{}, err
 	}
 
 	return mapper.UserOutFromModel(*dbToken.Edges.User), nil
 }
 
 // Creates a token for a user
-func (r *EntTokenRepository) CreateToken(createToken dtos.UserAuthTokenCreate, ctx context.Context) (dtos.UserAuthToken, error) {
-	tokenOut := dtos.UserAuthToken{}
+func (r *EntTokenRepository) CreateToken(createToken types.UserAuthTokenCreate, ctx context.Context) (types.UserAuthToken, error) {
+	tokenOut := types.UserAuthToken{}
 
 	dbToken, err := r.db.AuthTokens.Create().
 		SetToken(createToken.TokenHash).

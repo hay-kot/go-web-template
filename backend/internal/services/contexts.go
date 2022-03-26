@@ -3,7 +3,7 @@ package services
 import (
 	"context"
 
-	"github.com/hay-kot/git-web-template/backend/internal/dtos"
+	"github.com/hay-kot/git-web-template/backend/internal/types"
 )
 
 type contextKeys struct {
@@ -17,16 +17,16 @@ var (
 
 // SetUserContext is a helper function that sets the ContextUser and ContextUserToken
 // values within the context of a web request (or any context).
-func SetUserContext(ctx context.Context, user *dtos.UserOut, token string) context.Context {
+func SetUserContext(ctx context.Context, user *types.UserOut, token string) context.Context {
 	ctx = context.WithValue(ctx, ContextUser, user)
 	ctx = context.WithValue(ctx, ContextUserToken, token)
 	return ctx
 }
 
 // GetUserContext is a helper function that returns the user from the context.
-func GetUserContext(ctx context.Context) *dtos.UserOut {
+func GetUserContext(ctx context.Context) *types.UserOut {
 	if val := ctx.Value(ContextUser); val != nil {
-		return val.(*dtos.UserOut)
+		return val.(*types.UserOut)
 	}
 	return nil
 }

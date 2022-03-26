@@ -3,11 +3,11 @@ package mapper
 
 import (
 	"github.com/hay-kot/git-web-template/backend/ent"
-	"github.com/hay-kot/git-web-template/backend/internal/dtos"
+	"github.com/hay-kot/git-web-template/backend/internal/types"
 )
 
-func UserOutFromModel(from ent.User) dtos.UserOut {
-	return dtos.UserOut{
+func UserOutFromModel(from ent.User) types.UserOut {
+	return types.UserOut{
 		Id:          from.ID,
 		Name:        from.Name,
 		Email:       from.Email,
@@ -16,7 +16,7 @@ func UserOutFromModel(from ent.User) dtos.UserOut {
 	}
 }
 
-func UserOutToModel(from dtos.UserOut) ent.User {
+func UserOutToModel(from types.UserOut) ent.User {
 	return ent.User{
 		ID:          from.Id,
 		Name:        from.Name,

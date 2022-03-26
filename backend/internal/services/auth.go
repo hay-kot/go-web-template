@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/hay-kot/git-web-template/backend/internal/dtos"
 	"github.com/hay-kot/git-web-template/backend/internal/repo"
+	"github.com/hay-kot/git-web-template/backend/internal/types"
 	"github.com/hay-kot/git-web-template/backend/pkgs/hasher"
 )
 
@@ -21,23 +21,23 @@ type AuthService struct {
 	repos *repo.AllRepos
 }
 
-func (as *AuthService) createToken(ctx context.Context, userId uuid.UUID) (dtos.UserAuthTokenDetail, error) {
+func (as *AuthService) createToken(ctx context.Context, userId uuid.UUID) (types.UserAuthTokenDetail, error) {
 	newToken := hasher.GenerateToken()
 
-	created, err := as.repos.AuthTokens.CreateToken(dtos.UserAuthTokenCreate{
+	created, err := as.repos.AuthTokens.CreateToken(types.UserAuthTokenCreate{
 		UserId:    userId,
 		TokenHash: newToken.Hash,
 		ExpiresAt: time.Now().Add(oneWeek),
 	}, ctx)
 
-	return dtos.UserAuthTokenDetail{Raw: newToken.Raw, ExpiresAt: created.ExpiresAt}, err
+	return types.UserAuthTokenDetail{Raw: newToken.Raw, ExpiresAt: created.ExpiresAt}, err
 }
 
-func (as *AuthService) Login(ctx context.Context, username, password string) (dtos.UserAuthTokenDetail, error) {
+func (as *AuthService) Login(ctx context.Context, username, password string) (types.UserAuthTokenDetail, error) {
 	usr, err := as.repos.Users.GetOneEmail(username, ctx)
 
 	if err != nil || !hasher.CheckPasswordHash(password, usr.Password) {
-		return dtos.UserAuthTokenDetail{}, InvalidLogin
+		return types.UserAuthTokenDetail{}, InvalidLogin
 	}
 
 	return as.createToken(ctx, usr.Id)
@@ -49,13 +49,13 @@ func (as *AuthService) Logout(ctx context.Context, token string) error {
 	return err
 }
 
-func (as *AuthService) RenewToken(ctx context.Context, token string) (dtos.UserAuthTokenDetail, error) {
+func (as *AuthService) RenewToken(ctx context.Context, token string) (types.UserAuthTokenDetail, error) {
 	hash := hasher.HashToken(token)
 
 	dbToken, err := as.repos.AuthTokens.GetUserFromToken(hash, ctx)
 
 	if err != nil {
-		return dtos.UserAuthTokenDetail{}, InvalidToken
+		return types.UserAuthTokenDetail{}, InvalidToken
 	}
 
 	newToken, _ := as.createToken(ctx, dbToken.Id)

@@ -5,7 +5,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
-	"github.com/hay-kot/git-web-template/backend/internal/dtos"
+	"github.com/hay-kot/git-web-template/backend/internal/types"
 	"github.com/hay-kot/git-web-template/backend/pkgs/hasher"
 	"github.com/hay-kot/git-web-template/backend/pkgs/logger"
 	"github.com/hay-kot/git-web-template/backend/pkgs/server"
@@ -51,7 +51,7 @@ func (s *Handlersv1) HandleAdminUserGet() http.HandlerFunc {
 
 func (s *Handlersv1) HandleAdminUserCreate() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		createData := dtos.UserCreate{}
+		createData := types.UserCreate{}
 
 		if err := server.Decode(r, &createData); err != nil {
 			s.log.Error(err, logger.Props{

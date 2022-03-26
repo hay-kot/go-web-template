@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/hay-kot/git-web-template/backend/internal/dtos"
 	"github.com/hay-kot/git-web-template/backend/internal/repo"
+	"github.com/hay-kot/git-web-template/backend/internal/types"
 	"github.com/hay-kot/git-web-template/backend/pkgs/hasher"
 	"github.com/hay-kot/git-web-template/backend/pkgs/logger"
 )
@@ -31,7 +31,7 @@ func (a *app) EnsureAdministrator() {
 
 	pw, _ := hasher.HashPassword(DefaultPassword)
 
-	newSuperUser := dtos.UserCreate{
+	newSuperUser := types.UserCreate{
 		Name:        DefaultName,
 		Email:       DefaultEmail,
 		IsSuperuser: true,
@@ -77,7 +77,7 @@ func (a *app) SeedDatabase(repos *repo.AllRepos) {
 			})
 		}
 
-		_, err = repos.Users.Create(&dtos.UserCreate{
+		_, err = repos.Users.Create(&types.UserCreate{
 			Name:        user.Name,
 			Email:       user.Email,
 			IsSuperuser: user.IsSuperuser,

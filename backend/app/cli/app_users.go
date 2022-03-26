@@ -8,7 +8,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/hay-kot/git-web-template/backend/app/cli/reader"
-	"github.com/hay-kot/git-web-template/backend/internal/dtos"
+	"github.com/hay-kot/git-web-template/backend/internal/types"
 	"github.com/hay-kot/git-web-template/backend/pkgs/hasher"
 	"github.com/urfave/cli/v2"
 )
@@ -38,7 +38,7 @@ func (a *app) UserCreate(c *cli.Context) error {
 		return err
 	}
 
-	usr := &dtos.UserCreate{
+	usr := &types.UserCreate{
 		Name:        name,
 		Email:       email,
 		Password:    pwHash,

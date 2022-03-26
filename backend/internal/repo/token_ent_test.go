@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/hay-kot/git-web-template/backend/internal/dtos"
+	"github.com/hay-kot/git-web-template/backend/internal/types"
 	"github.com/hay-kot/git-web-template/backend/pkgs/hasher"
 	"github.com/stretchr/testify/assert"
 )
@@ -22,7 +22,7 @@ func Test_EntAuthTokenRepo_CreateToken(t *testing.T) {
 
 	generatedToken := hasher.GenerateToken()
 
-	token, err := testRepos.AuthTokens.CreateToken(dtos.UserAuthTokenCreate{
+	token, err := testRepos.AuthTokens.CreateToken(types.UserAuthTokenCreate{
 		TokenHash: generatedToken.Hash,
 		ExpiresAt: expiresAt,
 		UserId:    userOut.Id,
@@ -47,7 +47,7 @@ func Test_EntAuthTokenRepo_GetUserByToken(t *testing.T) {
 	expiresAt := time.Now().Add(time.Hour)
 	generatedToken := hasher.GenerateToken()
 
-	token, err := testRepos.AuthTokens.CreateToken(dtos.UserAuthTokenCreate{
+	token, err := testRepos.AuthTokens.CreateToken(types.UserAuthTokenCreate{
 		TokenHash: generatedToken.Hash,
 		ExpiresAt: expiresAt,
 		UserId:    userOut.Id,
@@ -73,13 +73,13 @@ func Test_EntAuthTokenRepo_PurgeExpiredTokens(t *testing.T) {
 	user := UserFactory()
 	userOut, _ := testRepos.Users.Create(&user, ctx)
 
-	createdTokens := []dtos.UserAuthToken{}
+	createdTokens := []types.UserAuthToken{}
 
 	for i := 0; i < 5; i++ {
 		expiresAt := time.Now()
 		generatedToken := hasher.GenerateToken()
 
-		createdToken, err := testRepos.AuthTokens.CreateToken(dtos.UserAuthTokenCreate{
+		createdToken, err := testRepos.AuthTokens.CreateToken(types.UserAuthTokenCreate{
 			TokenHash: generatedToken.Hash,
 			ExpiresAt: expiresAt,
 			UserId:    userOut.Id,

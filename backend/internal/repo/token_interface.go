@@ -3,14 +3,14 @@ package repo
 import (
 	"context"
 
-	"github.com/hay-kot/git-web-template/backend/internal/dtos"
+	"github.com/hay-kot/git-web-template/backend/internal/types"
 )
 
 type TokenRepository interface {
 	// GetUserFromToken get's a user from a token
-	GetUserFromToken(token []byte, ctx context.Context) (dtos.UserOut, error)
+	GetUserFromToken(token []byte, ctx context.Context) (types.UserOut, error)
 	// Creates a token for a user
-	CreateToken(createToken dtos.UserAuthTokenCreate, ctx context.Context) (dtos.UserAuthToken, error)
+	CreateToken(createToken types.UserAuthTokenCreate, ctx context.Context) (types.UserAuthToken, error)
 	// DeleteToken remove a single token from the database - equivalent to revoke or logout
 	DeleteToken(token []byte, ctx context.Context) error
 	// PurgeExpiredTokens removes all expired tokens from the database
