@@ -41,6 +41,7 @@ func TestMain(m *testing.M) {
 	mockHandler.log = mocks.GetStructLogger()
 	repos, closeDb := mocks.GetEntRepos()
 	mockHandler.repos = repos
+	mockHandler.services = mocks.GetMockServices(repos)
 
 	defer closeDb()
 

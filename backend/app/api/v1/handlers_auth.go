@@ -31,7 +31,7 @@ func (h *Handlersv1) HandleAuthLogin() http.HandlerFunc {
 			return
 		}
 
-		newToken, err := h.auth.Login(r.Context(), loginForm.Username, loginForm.Password)
+		newToken, err := h.services.Auth.Login(r.Context(), loginForm.Username, loginForm.Password)
 
 		err = server.Respond(w, http.StatusOK, TokenResponse{
 			BearerToken: "Bearer " + newToken.Raw,
@@ -57,7 +57,7 @@ func (h *Handlersv1) HandleAuthLogout() http.HandlerFunc {
 			return
 		}
 
-		err := h.auth.Logout(r.Context(), token)
+		err := h.services.Auth.Logout(r.Context(), token)
 
 		if err != nil {
 			server.RespondError(w, http.StatusInternalServerError, err)
@@ -79,7 +79,7 @@ func (h *Handlersv1) HandleAuthRefresh() http.HandlerFunc {
 			return
 		}
 
-		newToken, err := h.auth.RenewToken(r.Context(), requestToken)
+		newToken, err := h.services.Auth.RenewToken(r.Context(), requestToken)
 
 		if err != nil {
 			server.RespondUnauthorized(w)

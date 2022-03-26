@@ -8,7 +8,7 @@ import (
 
 func Test_NewHandlerV1(t *testing.T) {
 
-	v1Base, hdlr := NewHandlerV1("/testing/v1", mockHandler.repos, mockHandler.log)
+	v1Base, hdlr := NewHandlerV1("/testing/v1", mockHandler.repos, mockHandler.log, mockHandler.services)
 
 	assert.NotNil(t, hdlr)
 
