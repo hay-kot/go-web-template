@@ -6,6 +6,11 @@ import (
 	"github.com/google/uuid"
 )
 
+type UserAuthTokenDetail struct {
+	Raw       string    `json:"raw"`
+	ExpiresAt time.Time `json:"expiresAt"`
+}
+
 type UserAuthToken struct {
 	TokenHash []byte    `json:"token"`
 	UserId    uuid.UUID `json:"userId"`

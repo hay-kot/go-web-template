@@ -10,7 +10,7 @@ import (
 
 func (s *Handlersv1) HandleUserSelf() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		usr := services.UserFromContext(r.Context())
+		usr := services.GetUserContext(r.Context())
 
 		if usr == nil {
 			s.log.Error(errors.New("no user within request context"), nil)

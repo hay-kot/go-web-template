@@ -7,21 +7,31 @@ import (
 	"text/tabwriter"
 
 	"github.com/google/uuid"
+	"github.com/hay-kot/git-web-template/backend/app/cli/reader"
 	"github.com/hay-kot/git-web-template/backend/internal/dtos"
 	"github.com/hay-kot/git-web-template/backend/pkgs/hasher"
 	"github.com/urfave/cli/v2"
 )
 
 func (a *app) UserCreate(c *cli.Context) error {
+	var defaultValidators = []reader.StringValidator{
+		reader.StringRequired,
+		reader.StringNoLeadingOrTrailingWhitespace,
+	}
 	// Get Flags
-	name := c.String("name")
-	password := c.String("password")
-	email := c.String("email")
-	isSuper := c.Bool("is-super")
+	name := reader.ReadString("Name: ",
+		defaultValidators...,
+	)
+	password := reader.ReadString("Password: ",
+		defaultValidators...,
+	)
 
-	fmt.Println("Creating Superuser")
-	fmt.Printf("Name: %s\n", name)
-	fmt.Printf("Email: %s\n", email)
+	email := reader.ReadString("Email: ",
+		reader.StringRequired,
+		reader.StringNoLeadingOrTrailingWhitespace,
+		reader.StringContainsAt,
+	)
+	isSuper := reader.ReadBool("Is Superuser?")
 
 	pwHash, err := hasher.HashPassword(password)
 	if err != nil {

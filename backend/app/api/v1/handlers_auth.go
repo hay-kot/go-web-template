@@ -1,15 +1,11 @@
 package v1
 
 import (
-	"context"
 	"errors"
 	"net/http"
 	"time"
 
-	"github.com/google/uuid"
-	"github.com/hay-kot/git-web-template/backend/internal/dtos"
 	"github.com/hay-kot/git-web-template/backend/internal/services"
-	"github.com/hay-kot/git-web-template/backend/pkgs/hasher"
 	"github.com/hay-kot/git-web-template/backend/pkgs/logger"
 	"github.com/hay-kot/git-web-template/backend/pkgs/server"
 )
@@ -24,29 +20,6 @@ type TokenResponse struct {
 	ExpiresAt   time.Time `json:"expiresAt"`
 }
 
-func (h *Handlersv1) createToken(userId uuid.UUID, ctx context.Context) (TokenResponse, error) {
-	newToken := hasher.GenerateToken()
-
-	token, err := h.repos.AuthTokens.CreateToken(dtos.UserAuthTokenCreate{
-		UserId:    userId,
-		TokenHash: newToken.Hash,
-		ExpiresAt: time.Now().Add(time.Hour * 24 * 7),
-	}, ctx)
-
-	if err != nil {
-		return TokenResponse{}, err
-	}
-
-	if token.TokenHash == nil {
-		return TokenResponse{}, errors.New("token is empty")
-	}
-
-	return TokenResponse{
-		BearerToken: "Bearer " + newToken.Raw,
-		ExpiresAt:   token.ExpiresAt,
-	}, err
-}
-
 // handleAuthLogin returns a handler to handle username/password authentication for users of the API.
 func (h *Handlersv1) HandleAuthLogin() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -58,20 +31,16 @@ func (h *Handlersv1) HandleAuthLogin() http.HandlerFunc {
 			return
 		}
 
-		usr, err := h.repos.Users.GetOneEmail(loginForm.Username, r.Context())
+		newToken, err := h.auth.Login(r.Context(), loginForm.Username, loginForm.Password)
 
-		if err != nil || !hasher.CheckPasswordHash(loginForm.Password, usr.Password) {
-			server.RespondError(w, http.StatusUnauthorized, errors.New("invalid username or password"))
-			return
-		}
-
-		bearer, _ := h.createToken(usr.Id, r.Context())
-
-		err = server.Respond(w, http.StatusOK, bearer)
+		err = server.Respond(w, http.StatusOK, TokenResponse{
+			BearerToken: "Bearer " + newToken.Raw,
+			ExpiresAt:   newToken.ExpiresAt,
+		})
 
 		if err != nil {
 			h.log.Error(err, logger.Props{
-				"user": usr.Email,
+				"user": loginForm.Username,
 			})
 
 			return
@@ -81,15 +50,14 @@ func (h *Handlersv1) HandleAuthLogin() http.HandlerFunc {
 
 func (h *Handlersv1) HandleAuthLogout() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		token := services.UserTokenFromContext(r.Context())
+		token := services.GetUserTokenFromContext(r.Context())
 
 		if token == "" {
 			server.RespondError(w, http.StatusUnauthorized, errors.New("no token within request context"))
 			return
 		}
 
-		hash := hasher.HashToken(token)
-		err := h.repos.AuthTokens.DeleteToken(hash, r.Context())
+		err := h.auth.Logout(r.Context(), token)
 
 		if err != nil {
 			server.RespondError(w, http.StatusInternalServerError, err)
@@ -104,17 +72,14 @@ func (h *Handlersv1) HandleAuthLogout() http.HandlerFunc {
 // This does not validate that the user still exists within the database.
 func (h *Handlersv1) HandleAuthRefresh() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		requestToken := services.UserTokenFromContext(r.Context())
+		requestToken := services.GetUserTokenFromContext(r.Context())
 
 		if requestToken == "" {
 			server.RespondError(w, http.StatusUnauthorized, errors.New("no user token found"))
 			return
 		}
 
-		hash := hasher.HashToken(requestToken)
-
-		dbToken, err := h.repos.AuthTokens.GetUserFromToken(hash, r.Context())
-		newToken, _ := h.createToken(dbToken.Id, r.Context())
+		newToken, err := h.auth.RenewToken(r.Context(), requestToken)
 
 		if err != nil {
 			server.RespondUnauthorized(w)

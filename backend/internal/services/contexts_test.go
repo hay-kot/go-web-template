@@ -16,24 +16,24 @@ func Test_SetAuthContext(t *testing.T) {
 
 	token := uuid.New().String()
 
-	ctx := SetAuthContext(context.Background(), user, token)
+	ctx := SetUserContext(context.Background(), user, token)
 
-	ctxUser := UserFromContext(ctx)
+	ctxUser := GetUserContext(ctx)
 
 	assert.NotNil(t, ctxUser)
 	assert.Equal(t, user.Id, ctxUser.Id)
 
-	ctxUserToken := UserTokenFromContext(ctx)
+	ctxUserToken := GetUserTokenFromContext(ctx)
 	assert.NotEmpty(t, ctxUserToken)
 }
 
 func Test_SetAuthContext_Nulls(t *testing.T) {
-	ctx := SetAuthContext(context.Background(), nil, "")
+	ctx := SetUserContext(context.Background(), nil, "")
 
-	ctxUser := UserFromContext(ctx)
+	ctxUser := GetUserContext(ctx)
 
 	assert.Nil(t, ctxUser)
 
-	ctxUserToken := UserTokenFromContext(ctx)
+	ctxUserToken := GetUserTokenFromContext(ctx)
 	assert.Empty(t, ctxUserToken)
 }
