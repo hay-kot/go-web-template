@@ -47,6 +47,11 @@ type UserOut struct {
 	IsSuperuser bool      `json:"isSuperuser"`
 }
 
+// IsNull is a proxy call for `usr.Id == uuid.Nil`
+func (usr *UserOut) IsNull() bool {
+	return usr.Id == uuid.Nil
+}
+
 type UserUpdate struct {
 	Id    uuid.UUID `json:"id"`
 	Name  string    `json:"name,omitempty"`

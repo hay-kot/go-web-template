@@ -31,8 +31,8 @@ func (a *app) newRouter(repos *repo.AllRepos) *chi.Mux {
 
 	// =========================================================================
 	// API Version 1
-
-	v1Base, v1Handlers := v1.NewHandlerV1(prefix, repos, a.logger, a.services)
+	v1Base := v1.BaseUrlFunc(prefix)
+	v1Handlers := v1.NewControllerV1(a.logger, a.services)
 	r.Post(v1Base("/users/login"), v1Handlers.HandleAuthLogin())
 	r.Group(func(r chi.Router) {
 		r.Use(a.mwAuthToken)

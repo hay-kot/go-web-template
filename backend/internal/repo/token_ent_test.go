@@ -16,24 +16,24 @@ func Test_EntAuthTokenRepo_CreateToken(t *testing.T) {
 
 	user := UserFactory()
 
-	userOut, _ := testRepos.Users.Create(&user, ctx)
+	userOut, _ := testRepos.Users.Create(ctx, &user)
 
 	expiresAt := time.Now().Add(time.Hour)
 
 	generatedToken := hasher.GenerateToken()
 
-	token, err := testRepos.AuthTokens.CreateToken(types.UserAuthTokenCreate{
+	token, err := testRepos.AuthTokens.CreateToken(ctx, types.UserAuthTokenCreate{
 		TokenHash: generatedToken.Hash,
 		ExpiresAt: expiresAt,
 		UserId:    userOut.Id,
-	}, ctx)
+	})
 
 	assert.NoError(err)
 	assert.Equal(userOut.Id, token.UserId)
 	assert.Equal(expiresAt, token.ExpiresAt)
 
 	// Cleanup
-	err = testRepos.Users.Delete(userOut.Id, ctx)
+	err = testRepos.Users.Delete(ctx, userOut.Id)
 	_, err = testRepos.AuthTokens.DeleteAll(ctx)
 }
 
@@ -42,19 +42,19 @@ func Test_EntAuthTokenRepo_GetUserByToken(t *testing.T) {
 	ctx := context.Background()
 
 	user := UserFactory()
-	userOut, _ := testRepos.Users.Create(&user, ctx)
+	userOut, _ := testRepos.Users.Create(ctx, &user)
 
 	expiresAt := time.Now().Add(time.Hour)
 	generatedToken := hasher.GenerateToken()
 
-	token, err := testRepos.AuthTokens.CreateToken(types.UserAuthTokenCreate{
+	token, err := testRepos.AuthTokens.CreateToken(ctx, types.UserAuthTokenCreate{
 		TokenHash: generatedToken.Hash,
 		ExpiresAt: expiresAt,
 		UserId:    userOut.Id,
-	}, ctx)
+	})
 
 	// Get User from token
-	foundUser, err := testRepos.AuthTokens.GetUserFromToken(token.TokenHash, ctx)
+	foundUser, err := testRepos.AuthTokens.GetUserFromToken(ctx, token.TokenHash)
 
 	assert.NoError(err)
 	assert.Equal(userOut.Id, foundUser.Id)
@@ -62,7 +62,7 @@ func Test_EntAuthTokenRepo_GetUserByToken(t *testing.T) {
 	assert.Equal(userOut.Email, foundUser.Email)
 
 	// Cleanup
-	err = testRepos.Users.Delete(userOut.Id, ctx)
+	err = testRepos.Users.Delete(ctx, userOut.Id)
 	_, err = testRepos.AuthTokens.DeleteAll(ctx)
 }
 
@@ -71,7 +71,7 @@ func Test_EntAuthTokenRepo_PurgeExpiredTokens(t *testing.T) {
 	ctx := context.Background()
 
 	user := UserFactory()
-	userOut, _ := testRepos.Users.Create(&user, ctx)
+	userOut, _ := testRepos.Users.Create(ctx, &user)
 
 	createdTokens := []types.UserAuthToken{}
 
@@ -79,11 +79,11 @@ func Test_EntAuthTokenRepo_PurgeExpiredTokens(t *testing.T) {
 		expiresAt := time.Now()
 		generatedToken := hasher.GenerateToken()
 
-		createdToken, err := testRepos.AuthTokens.CreateToken(types.UserAuthTokenCreate{
+		createdToken, err := testRepos.AuthTokens.CreateToken(ctx, types.UserAuthTokenCreate{
 			TokenHash: generatedToken.Hash,
 			ExpiresAt: expiresAt,
 			UserId:    userOut.Id,
-		}, ctx)
+		})
 
 		assert.NoError(err)
 		assert.NotNil(createdToken)
@@ -100,11 +100,11 @@ func Test_EntAuthTokenRepo_PurgeExpiredTokens(t *testing.T) {
 
 	// Check if tokens are deleted
 	for _, token := range createdTokens {
-		_, err := testRepos.AuthTokens.GetUserFromToken(token.TokenHash, ctx)
+		_, err := testRepos.AuthTokens.GetUserFromToken(ctx, token.TokenHash)
 		assert.Error(err)
 	}
 
 	// Cleanup
-	err = testRepos.Users.Delete(userOut.Id, ctx)
+	err = testRepos.Users.Delete(ctx, userOut.Id)
 	_, err = testRepos.AuthTokens.DeleteAll(ctx)
 }

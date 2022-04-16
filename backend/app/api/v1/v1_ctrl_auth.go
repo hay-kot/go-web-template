@@ -21,7 +21,7 @@ type TokenResponse struct {
 }
 
 // handleAuthLogin returns a handler to handle username/password authentication for users of the API.
-func (h *Handlersv1) HandleAuthLogin() http.HandlerFunc {
+func (ctrl *V1Controller) HandleAuthLogin() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		loginForm := LoginForm{}
 		err := server.Decode(r, &loginForm)
@@ -31,7 +31,7 @@ func (h *Handlersv1) HandleAuthLogin() http.HandlerFunc {
 			return
 		}
 
-		newToken, err := h.services.Auth.Login(r.Context(), loginForm.Username, loginForm.Password)
+		newToken, err := ctrl.svc.User.Login(r.Context(), loginForm.Username, loginForm.Password)
 
 		err = server.Respond(w, http.StatusOK, TokenResponse{
 			BearerToken: "Bearer " + newToken.Raw,
@@ -39,7 +39,7 @@ func (h *Handlersv1) HandleAuthLogin() http.HandlerFunc {
 		})
 
 		if err != nil {
-			h.log.Error(err, logger.Props{
+			ctrl.log.Error(err, logger.Props{
 				"user": loginForm.Username,
 			})
 
@@ -48,7 +48,7 @@ func (h *Handlersv1) HandleAuthLogin() http.HandlerFunc {
 	}
 }
 
-func (h *Handlersv1) HandleAuthLogout() http.HandlerFunc {
+func (ctrl *V1Controller) HandleAuthLogout() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		token := services.GetUserTokenFromContext(r.Context())
 
@@ -57,7 +57,7 @@ func (h *Handlersv1) HandleAuthLogout() http.HandlerFunc {
 			return
 		}
 
-		err := h.services.Auth.Logout(r.Context(), token)
+		err := ctrl.svc.User.Logout(r.Context(), token)
 
 		if err != nil {
 			server.RespondError(w, http.StatusInternalServerError, err)
@@ -70,7 +70,7 @@ func (h *Handlersv1) HandleAuthLogout() http.HandlerFunc {
 
 // handleAuthRefresh returns a handler that will issue a new token from an existing token.
 // This does not validate that the user still exists within the database.
-func (h *Handlersv1) HandleAuthRefresh() http.HandlerFunc {
+func (ctrl *V1Controller) HandleAuthRefresh() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		requestToken := services.GetUserTokenFromContext(r.Context())
 
@@ -79,7 +79,7 @@ func (h *Handlersv1) HandleAuthRefresh() http.HandlerFunc {
 			return
 		}
 
-		newToken, err := h.services.Auth.RenewToken(r.Context(), requestToken)
+		newToken, err := ctrl.svc.User.RenewToken(r.Context(), requestToken)
 
 		if err != nil {
 			server.RespondUnauthorized(w)

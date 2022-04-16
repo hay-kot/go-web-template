@@ -53,7 +53,7 @@ func (a *app) mwAuthToken(next http.Handler) http.Handler {
 		hash := hasher.HashToken(requestToken)
 
 		// Check the database for the token
-		usr, err := a.repos.AuthTokens.GetUserFromToken(hash, r.Context())
+		usr, err := a.repos.AuthTokens.GetUserFromToken(r.Context(), hash)
 
 		if err != nil {
 			a.logger.Error(err, logger.Props{

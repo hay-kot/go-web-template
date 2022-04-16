@@ -15,7 +15,7 @@ type EntTokenRepository struct {
 }
 
 // GetUserFromToken get's a user from a token
-func (r *EntTokenRepository) GetUserFromToken(token []byte, ctx context.Context) (types.UserOut, error) {
+func (r *EntTokenRepository) GetUserFromToken(ctx context.Context, token []byte) (types.UserOut, error) {
 	dbToken, err := r.db.AuthTokens.Query().
 		Where(authtokens.Token(token)).
 		Where(authtokens.ExpiresAtGTE(time.Now())).
@@ -30,7 +30,7 @@ func (r *EntTokenRepository) GetUserFromToken(token []byte, ctx context.Context)
 }
 
 // Creates a token for a user
-func (r *EntTokenRepository) CreateToken(createToken types.UserAuthTokenCreate, ctx context.Context) (types.UserAuthToken, error) {
+func (r *EntTokenRepository) CreateToken(ctx context.Context, createToken types.UserAuthTokenCreate) (types.UserAuthToken, error) {
 	tokenOut := types.UserAuthToken{}
 
 	dbToken, err := r.db.AuthTokens.Create().
@@ -52,7 +52,7 @@ func (r *EntTokenRepository) CreateToken(createToken types.UserAuthTokenCreate, 
 }
 
 // DeleteToken remove a single token from the database - equivalent to revoke or logout
-func (r *EntTokenRepository) DeleteToken(token []byte, ctx context.Context) error {
+func (r *EntTokenRepository) DeleteToken(ctx context.Context, token []byte) error {
 	_, err := r.db.AuthTokens.Delete().Where(authtokens.Token(token)).Exec(ctx)
 	return err
 }

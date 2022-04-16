@@ -3,11 +3,13 @@ package services
 import "github.com/hay-kot/git-web-template/backend/internal/repo"
 
 type AllServices struct {
-	Auth *AuthService
+	User  *UserService
+	Admin *AdminService
 }
 
 func NewServices(repos *repo.AllRepos) *AllServices {
 	return &AllServices{
-		Auth: &AuthService{repos},
+		User:  &UserService{repos},
+		Admin: &AdminService{repos},
 	}
 }

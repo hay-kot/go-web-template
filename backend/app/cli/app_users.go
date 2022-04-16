@@ -45,7 +45,7 @@ func (a *app) UserCreate(c *cli.Context) error {
 		IsSuperuser: isSuper,
 	}
 
-	_, err = a.repos.Users.Create(usr, context.Background())
+	_, err = a.repos.Users.Create(context.Background(), usr)
 
 	if err == nil {
 		fmt.Println("Super user created")
@@ -69,7 +69,7 @@ func (a *app) UserDelete(c *cli.Context) error {
 		return nil
 	}
 
-	err = a.repos.Users.Delete(uid, context.Background())
+	err = a.repos.Users.Delete(context.Background(), uid)
 
 	if err == nil {
 		fmt.Printf("%v User(s) deleted (id=%v)\n", 1, id)

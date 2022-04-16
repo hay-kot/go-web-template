@@ -21,7 +21,7 @@ func (e *EntUserRepository) toUserOut(usr *types.UserOut, entUsr *ent.User) {
 	usr.IsSuperuser = entUsr.IsSuperuser
 }
 
-func (e *EntUserRepository) GetOneId(id uuid.UUID, ctx context.Context) (types.UserOut, error) {
+func (e *EntUserRepository) GetOneId(ctx context.Context, id uuid.UUID) (types.UserOut, error) {
 	usr, err := e.db.User.Query().Where(user.ID(id)).Only(ctx)
 
 	usrOut := types.UserOut{}
@@ -35,7 +35,7 @@ func (e *EntUserRepository) GetOneId(id uuid.UUID, ctx context.Context) (types.U
 	return usrOut, nil
 }
 
-func (e *EntUserRepository) GetOneEmail(email string, ctx context.Context) (types.UserOut, error) {
+func (e *EntUserRepository) GetOneEmail(ctx context.Context, email string) (types.UserOut, error) {
 	usr, err := e.db.User.Query().Where(user.Email(email)).Only(ctx)
 
 	usrOut := types.UserOut{}
@@ -67,7 +67,7 @@ func (e *EntUserRepository) GetAll(ctx context.Context) ([]types.UserOut, error)
 	return usrs, nil
 }
 
-func (e *EntUserRepository) Create(usr *types.UserCreate, ctx context.Context) (types.UserOut, error) {
+func (e *EntUserRepository) Create(ctx context.Context, usr *types.UserCreate) (types.UserOut, error) {
 	err := usr.Validate()
 	usrOut := types.UserOut{}
 
@@ -88,12 +88,12 @@ func (e *EntUserRepository) Create(usr *types.UserCreate, ctx context.Context) (
 	return usrOut, err
 }
 
-func (e *EntUserRepository) Update(user *types.UserCreate, ctx context.Context) error {
+func (e *EntUserRepository) Update(ctx context.Context, user *types.UserCreate) error {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (e *EntUserRepository) Delete(id uuid.UUID, ctx context.Context) error {
+func (e *EntUserRepository) Delete(ctx context.Context, id uuid.UUID) error {
 	_, err := e.db.User.Delete().Where(user.ID(id)).Exec(ctx)
 	return err
 }

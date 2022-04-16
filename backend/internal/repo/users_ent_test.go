@@ -25,9 +25,9 @@ func Test_EntUserRepo_GetOneEmail(t *testing.T) {
 	user := UserFactory()
 	ctx := context.Background()
 
-	testRepos.Users.Create(&user, ctx)
+	testRepos.Users.Create(ctx, &user)
 
-	foundUser, err := testRepos.Users.GetOneEmail(user.Email, ctx)
+	foundUser, err := testRepos.Users.GetOneEmail(ctx, user.Email)
 
 	assert.NotNil(foundUser)
 	assert.Nil(err)
@@ -43,8 +43,8 @@ func Test_EntUserRepo_GetOneId(t *testing.T) {
 	user := UserFactory()
 	ctx := context.Background()
 
-	userOut, _ := testRepos.Users.Create(&user, ctx)
-	foundUser, err := testRepos.Users.GetOneId(userOut.Id, ctx)
+	userOut, _ := testRepos.Users.Create(ctx, &user)
+	foundUser, err := testRepos.Users.GetOneId(ctx, userOut.Id)
 
 	assert.NotNil(foundUser)
 	assert.Nil(err)
@@ -69,7 +69,7 @@ func Test_EntUserRepo_GetAll(t *testing.T) {
 	created := []types.UserOut{}
 
 	for _, usr := range toCreate {
-		usrOut, _ := testRepos.Users.Create(&usr, ctx)
+		usrOut, _ := testRepos.Users.Create(ctx, &usr)
 		created = append(created, usrOut)
 	}
 
@@ -85,7 +85,7 @@ func Test_EntUserRepo_GetAll(t *testing.T) {
 	}
 
 	for _, usr := range created {
-		testRepos.Users.Delete(usr.Id, ctx)
+		testRepos.Users.Delete(ctx, usr.Id)
 	}
 
 	// Cleanup
@@ -101,7 +101,7 @@ func Test_EntUserRepo_Delete(t *testing.T) {
 	for i := 0; i < 10; i++ {
 		user := UserFactory()
 		ctx := context.Background()
-		_, _ = testRepos.Users.Create(&user, ctx)
+		_, _ = testRepos.Users.Create(ctx, &user)
 	}
 
 	// Delete all
@@ -124,7 +124,7 @@ func Test_EntUserRepo_GetSuperusers(t *testing.T) {
 	for i := 0; i < 10; i++ {
 		user := UserFactory()
 		ctx := context.Background()
-		_, _ = testRepos.Users.Create(&user, ctx)
+		_, _ = testRepos.Users.Create(ctx, &user)
 
 		if user.IsSuperuser {
 			superuser++

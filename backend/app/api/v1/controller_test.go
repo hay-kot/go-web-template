@@ -8,12 +8,12 @@ import (
 
 func Test_NewHandlerV1(t *testing.T) {
 
-	v1Base, hdlr := NewHandlerV1("/testing/v1", mockHandler.repos, mockHandler.log, mockHandler.services)
+	v1Base := BaseUrlFunc("/testing/v1")
+	ctrl := NewControllerV1(mockHandler.log, mockHandler.svc)
 
-	assert.NotNil(t, hdlr)
+	assert.NotNil(t, ctrl)
 
-	assert.Equal(t, hdlr.log, mockHandler.log)
-	assert.Equal(t, hdlr.repos, mockHandler.repos)
+	assert.Equal(t, ctrl.log, mockHandler.log)
 
 	assert.Equal(t, "/testing/v1/v1/abc123", v1Base("/abc123"))
 	assert.Equal(t, "/testing/v1/v1/abc123", v1Base("/abc123"))

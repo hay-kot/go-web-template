@@ -1,6 +1,11 @@
 package types
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/google/uuid"
+	"github.com/stretchr/testify/assert"
+)
 
 func TestUserCreate_Validate(t *testing.T) {
 	type fields struct {
@@ -58,4 +63,14 @@ func TestUserCreate_Validate(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestUserOut_IsNull(t *testing.T) {
+	nullUser := UserOut{}
+
+	assert.True(t, nullUser.IsNull())
+
+	nullUser.Id = uuid.New()
+
+	assert.False(t, nullUser.IsNull())
 }

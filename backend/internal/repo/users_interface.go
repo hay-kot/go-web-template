@@ -9,19 +9,19 @@ import (
 
 type UserRepository interface {
 	// GetOneId returns a user by id
-	GetOneId(id uuid.UUID, ctx context.Context) (types.UserOut, error)
+	GetOneId(ctx context.Context, id uuid.UUID) (types.UserOut, error)
 	// GetOneEmail returns a user by email
-	GetOneEmail(email string, ctx context.Context) (types.UserOut, error)
+	GetOneEmail(ctx context.Context, email string) (types.UserOut, error)
 	// GetAll returns all users
 	GetAll(ctx context.Context) ([]types.UserOut, error)
 	// Get Super Users
 	GetSuperusers(ctx context.Context) ([]types.UserOut, error)
 	// Create creates a new user
-	Create(user *types.UserCreate, ctx context.Context) (types.UserOut, error)
+	Create(ctx context.Context, user *types.UserCreate) (types.UserOut, error)
 	// Update updates a user
-	Update(user *types.UserCreate, ctx context.Context) error
+	Update(ctx context.Context, user *types.UserCreate) error
 	// Delete deletes a user
-	Delete(id uuid.UUID, ctx context.Context) error
+	Delete(ctx context.Context, id uuid.UUID) error
 
 	DeleteAll(ctx context.Context) error
 }

@@ -90,14 +90,14 @@ func Test_HandleAdminUserCreate_Success(t *testing.T) {
 
 	assert.Equal(t, http.StatusCreated, r.Code)
 
-	usr, err := mockHandler.repos.Users.GetOneEmail(payload.Email, context.Background())
+	usr, err := mockHandler.svc.Admin.GetByEmail(context.Background(), payload.Email)
 
 	assert.NoError(t, err)
 	assert.Equal(t, payload.Email, usr.Email)
 	assert.Equal(t, payload.Name, usr.Name)
 	assert.NotEqual(t, payload.Password, usr.Password) // smoke test - check password is hashed
 
-	_ = mockHandler.repos.Users.Delete(usr.Id, context.Background())
+	_ = mockHandler.svc.Admin.Delete(context.Background(), usr.Id)
 }
 
 func Test_HandleAdminUserUpdate_Success(t *testing.T) {

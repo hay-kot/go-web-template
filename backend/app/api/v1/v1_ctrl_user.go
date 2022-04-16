@@ -8,12 +8,14 @@ import (
 	"github.com/hay-kot/git-web-template/backend/pkgs/server"
 )
 
-func (s *Handlersv1) HandleUserSelf() http.HandlerFunc {
+func (ctrl *V1Controller) HandleUserSelf() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		usr := services.GetUserContext(r.Context())
+		token := services.GetUserTokenFromContext(r.Context())
 
-		if usr == nil {
-			s.log.Error(errors.New("no user within request context"), nil)
+		usr, err := ctrl.svc.User.GetSelf(r.Context(), token)
+
+		if usr.IsNull() || err != nil {
+			ctrl.log.Error(errors.New("no user within request context"), nil)
 			server.RespondInternalServerError(w)
 			return
 		}

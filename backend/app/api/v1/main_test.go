@@ -9,7 +9,7 @@ import (
 	"github.com/hay-kot/git-web-template/backend/internal/types"
 )
 
-var mockHandler = &Handlersv1{}
+var mockHandler = &V1Controller{}
 var users = []types.UserOut{}
 
 func userPool() func() {
@@ -23,14 +23,14 @@ func userPool() func() {
 	userOut := []types.UserOut{}
 
 	for _, user := range create {
-		usrOut, _ := mockHandler.repos.Users.Create(&user, context.Background())
+		usrOut, _ := mockHandler.svc.Admin.Create(context.Background(), &user)
 		userOut = append(userOut, usrOut)
 	}
 
 	users = userOut
 
 	purge := func() {
-		mockHandler.repos.Users.DeleteAll(context.Background())
+		mockHandler.svc.Admin.DeleteAll(context.Background())
 	}
 
 	return purge
@@ -40,8 +40,7 @@ func TestMain(m *testing.M) {
 	// Set Handler Vars
 	mockHandler.log = mocks.GetStructLogger()
 	repos, closeDb := mocks.GetEntRepos()
-	mockHandler.repos = repos
-	mockHandler.services = mocks.GetMockServices(repos)
+	mockHandler.svc = mocks.GetMockServices(repos)
 
 	defer closeDb()
 

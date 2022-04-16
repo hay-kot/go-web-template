@@ -43,7 +43,7 @@ func (a *app) EnsureAdministrator() {
 		"email": newSuperUser.Email,
 	})
 
-	_, err = a.repos.Users.Create(&newSuperUser, context.Background())
+	_, err = a.repos.Users.Create(context.Background(), &newSuperUser)
 
 	if err != nil {
 		a.logger.Fatal(err, nil)
@@ -59,7 +59,7 @@ func (a *app) SeedDatabase(repos *repo.AllRepos) {
 	for _, user := range a.conf.Seed.Users {
 
 		// Check if User Exists
-		usr, _ := repos.Users.GetOneEmail(user.Email, context.Background())
+		usr, _ := repos.Users.GetOneEmail(context.Background(), user.Email)
 
 		if usr.Id != uuid.Nil {
 			a.logger.Info("seed user already exists", logger.Props{
@@ -77,12 +77,12 @@ func (a *app) SeedDatabase(repos *repo.AllRepos) {
 			})
 		}
 
-		_, err = repos.Users.Create(&types.UserCreate{
+		_, err = repos.Users.Create(context.Background(), &types.UserCreate{
 			Name:        user.Name,
 			Email:       user.Email,
 			IsSuperuser: user.IsSuperuser,
 			Password:    hashedPw,
-		}, context.Background())
+		})
 
 		if err != nil {
 			a.logger.Error(err, logger.Props{
