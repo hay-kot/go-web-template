@@ -40,7 +40,7 @@ func (u *UserCreate) Validate() error {
 }
 
 type UserOut struct {
-	Id          uuid.UUID `json:"id"`
+	ID          uuid.UUID `json:"id"`
 	Name        string    `json:"name,omitempty"`
 	Email       string    `json:"email,omitempty"`
 	Password    string    `json:"-"`
@@ -49,11 +49,11 @@ type UserOut struct {
 
 // IsNull is a proxy call for `usr.Id == uuid.Nil`
 func (usr *UserOut) IsNull() bool {
-	return usr.Id == uuid.Nil
+	return usr.ID == uuid.Nil
 }
 
 type UserUpdate struct {
-	Id    uuid.UUID `json:"id"`
+	ID    uuid.UUID `json:"id"`
 	Name  string    `json:"name,omitempty"`
 	Email string    `json:"email,omitempty"`
 }

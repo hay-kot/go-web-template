@@ -60,9 +60,9 @@ func Test_HandleAdminUserGetAll_Success(t *testing.T) {
 func Test_HandleAdminUserGet_Success(t *testing.T) {
 	targetUser := users[2]
 	res := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, fmt.Sprintf(UrlUserId, targetUser.Id), nil)
+	req := httptest.NewRequest(http.MethodGet, fmt.Sprintf(UrlUserId, targetUser.ID), nil)
 
-	req = chimocker.WithUrlParam(req, "id", fmt.Sprintf("%v", targetUser.Id))
+	req = chimocker.WithUrlParam(req, "id", fmt.Sprintf("%v", targetUser.ID))
 
 	mockHandler.HandleAdminUserGet()(res, req)
 	assert.Equal(t, http.StatusOK, res.Code)
@@ -72,7 +72,7 @@ func Test_HandleAdminUserGet_Success(t *testing.T) {
 	}
 
 	_ = json.Unmarshal(res.Body.Bytes(), &response)
-	assert.Equal(t, targetUser.Id, response.User.Id)
+	assert.Equal(t, targetUser.ID, response.User.ID)
 }
 
 func Test_HandleAdminUserCreate_Success(t *testing.T) {
@@ -97,7 +97,7 @@ func Test_HandleAdminUserCreate_Success(t *testing.T) {
 	assert.Equal(t, payload.Name, usr.Name)
 	assert.NotEqual(t, payload.Password, usr.Password) // smoke test - check password is hashed
 
-	_ = mockHandler.svc.Admin.Delete(context.Background(), usr.Id)
+	_ = mockHandler.svc.Admin.Delete(context.Background(), usr.ID)
 }
 
 func Test_HandleAdminUserUpdate_Success(t *testing.T) {

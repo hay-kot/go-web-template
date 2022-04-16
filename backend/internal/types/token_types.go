@@ -13,7 +13,7 @@ type UserAuthTokenDetail struct {
 
 type UserAuthToken struct {
 	TokenHash []byte    `json:"token"`
-	UserId    uuid.UUID `json:"userId"`
+	UserID    uuid.UUID `json:"userId"`
 	ExpiresAt time.Time `json:"expiresAt"`
 	CreatedAt time.Time `json:"createdAt"`
 }
@@ -24,6 +24,6 @@ func (u UserAuthToken) IsExpired() bool {
 
 type UserAuthTokenCreate struct {
 	TokenHash []byte    `json:"token"`
-	UserId    uuid.UUID `json:"userId"`
+	UserID    uuid.UUID `json:"userId"`
 	ExpiresAt time.Time `json:"expiresAt"`
 }

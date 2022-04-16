@@ -61,7 +61,7 @@ func (a *app) SeedDatabase(repos *repo.AllRepos) {
 		// Check if User Exists
 		usr, _ := repos.Users.GetOneEmail(context.Background(), user.Email)
 
-		if usr.Id != uuid.Nil {
+		if usr.ID != uuid.Nil {
 			a.logger.Info("seed user already exists", logger.Props{
 				"user": user.Name,
 			})

@@ -14,7 +14,7 @@ type EntUserRepository struct {
 }
 
 func (e *EntUserRepository) toUserOut(usr *types.UserOut, entUsr *ent.User) {
-	usr.Id = entUsr.ID
+	usr.ID = entUsr.ID
 	usr.Password = entUsr.Password
 	usr.Name = entUsr.Name
 	usr.Email = entUsr.Email

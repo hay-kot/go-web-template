@@ -11,7 +11,7 @@ import (
 
 func Test_SetAuthContext(t *testing.T) {
 	user := &types.UserOut{
-		Id: uuid.New(),
+		ID: uuid.New(),
 	}
 
 	token := uuid.New().String()
@@ -21,7 +21,7 @@ func Test_SetAuthContext(t *testing.T) {
 	ctxUser := GetUserContext(ctx)
 
 	assert.NotNil(t, ctxUser)
-	assert.Equal(t, user.Id, ctxUser.Id)
+	assert.Equal(t, user.ID, ctxUser.ID)
 
 	ctxUserToken := GetUserTokenFromContext(ctx)
 	assert.NotEmpty(t, ctxUserToken)

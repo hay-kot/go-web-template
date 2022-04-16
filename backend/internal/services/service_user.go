@@ -35,7 +35,7 @@ func (svc *UserService) createToken(ctx context.Context, userId uuid.UUID) (type
 	newToken := hasher.GenerateToken()
 
 	created, err := svc.repos.AuthTokens.CreateToken(ctx, types.UserAuthTokenCreate{
-		UserId:    userId,
+		UserID:    userId,
 		TokenHash: newToken.Hash,
 		ExpiresAt: time.Now().Add(oneWeek),
 	})
@@ -50,7 +50,7 @@ func (svc *UserService) Login(ctx context.Context, username, password string) (t
 		return types.UserAuthTokenDetail{}, ErrorInvalidLogin
 	}
 
-	return svc.createToken(ctx, usr.Id)
+	return svc.createToken(ctx, usr.ID)
 }
 
 func (svc *UserService) Logout(ctx context.Context, token string) error {
@@ -68,7 +68,7 @@ func (svc *UserService) RenewToken(ctx context.Context, token string) (types.Use
 		return types.UserAuthTokenDetail{}, ErrorInvalidToken
 	}
 
-	newToken, _ := svc.createToken(ctx, dbToken.Id)
+	newToken, _ := svc.createToken(ctx, dbToken.ID)
 
 	return newToken, nil
 }

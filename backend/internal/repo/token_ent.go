@@ -35,7 +35,7 @@ func (r *EntTokenRepository) CreateToken(ctx context.Context, createToken types.
 
 	dbToken, err := r.db.AuthTokens.Create().
 		SetToken(createToken.TokenHash).
-		SetUserID(createToken.UserId).
+		SetUserID(createToken.UserID).
 		SetExpiresAt(createToken.ExpiresAt).
 		Save(ctx)
 
@@ -44,7 +44,7 @@ func (r *EntTokenRepository) CreateToken(ctx context.Context, createToken types.
 	}
 
 	tokenOut.TokenHash = dbToken.Token
-	tokenOut.UserId = createToken.UserId
+	tokenOut.UserID = createToken.UserID
 	tokenOut.CreatedAt = dbToken.CreatedAt
 	tokenOut.ExpiresAt = dbToken.ExpiresAt
 

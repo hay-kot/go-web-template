@@ -8,7 +8,7 @@ import (
 
 func UserOutFromModel(from ent.User) types.UserOut {
 	return types.UserOut{
-		Id:          from.ID,
+		ID:          from.ID,
 		Name:        from.Name,
 		Email:       from.Email,
 		Password:    from.Password,
@@ -18,7 +18,7 @@ func UserOutFromModel(from ent.User) types.UserOut {
 
 func UserOutToModel(from types.UserOut) ent.User {
 	return ent.User{
-		ID:          from.Id,
+		ID:          from.ID,
 		Name:        from.Name,
 		Email:       from.Email,
 		Password:    from.Password,

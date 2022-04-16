@@ -98,7 +98,7 @@ func (a *app) UserList(c *cli.Context) error {
 	}
 
 	for _, u := range users {
-		_, _ = fmt.Fprintf(tabWriter, "%v\t%s\t%s\t%v\n", u.Id, u.Name, u.Email, u.IsSuperuser)
+		_, _ = fmt.Fprintf(tabWriter, "%v\t%s\t%s\t%v\n", u.ID, u.Name, u.Email, u.IsSuperuser)
 	}
 
 	return nil

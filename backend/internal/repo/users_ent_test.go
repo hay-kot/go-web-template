@@ -44,7 +44,7 @@ func Test_EntUserRepo_GetOneId(t *testing.T) {
 	ctx := context.Background()
 
 	userOut, _ := testRepos.Users.Create(ctx, &user)
-	foundUser, err := testRepos.Users.GetOneId(ctx, userOut.Id)
+	foundUser, err := testRepos.Users.GetOneId(ctx, userOut.ID)
 
 	assert.NotNil(foundUser)
 	assert.Nil(err)
@@ -85,7 +85,7 @@ func Test_EntUserRepo_GetAll(t *testing.T) {
 	}
 
 	for _, usr := range created {
-		testRepos.Users.Delete(ctx, usr.Id)
+		testRepos.Users.Delete(ctx, usr.ID)
 	}
 
 	// Cleanup

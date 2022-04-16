@@ -70,7 +70,7 @@ func TestUserOut_IsNull(t *testing.T) {
 
 	assert.True(t, nullUser.IsNull())
 
-	nullUser.Id = uuid.New()
+	nullUser.ID = uuid.New()
 
 	assert.False(t, nullUser.IsNull())
 }
