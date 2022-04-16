@@ -5,15 +5,15 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
-	"github.com/hay-kot/git-web-template/backend/internal/dtos"
+	"github.com/hay-kot/git-web-template/backend/internal/types"
 	"github.com/hay-kot/git-web-template/backend/pkgs/hasher"
 	"github.com/hay-kot/git-web-template/backend/pkgs/logger"
 	"github.com/hay-kot/git-web-template/backend/pkgs/server"
 )
 
-func (s *Handlersv1) HandleAdminUserGetAll() http.HandlerFunc {
+func (ctrl *V1Controller) HandleAdminUserGetAll() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		users, err := s.repos.Users.GetAll(r.Context())
+		users, err := ctrl.svc.Admin.GetAll(r.Context())
 
 		if err != nil {
 			server.RespondError(w, http.StatusInternalServerError, err)
@@ -24,12 +24,12 @@ func (s *Handlersv1) HandleAdminUserGetAll() http.HandlerFunc {
 	}
 }
 
-func (s *Handlersv1) HandleAdminUserGet() http.HandlerFunc {
+func (ctrl *V1Controller) HandleAdminUserGet() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		uid, err := uuid.Parse(chi.URLParam(r, "id"))
 
 		if err != nil {
-			s.log.Debug(err.Error(), logger.Props{
+			ctrl.log.Debug(err.Error(), logger.Props{
 				"scope":   "admin",
 				"details": "failed to convert id to valid UUID",
 			})
@@ -37,10 +37,10 @@ func (s *Handlersv1) HandleAdminUserGet() http.HandlerFunc {
 			return
 		}
 
-		user, err := s.repos.Users.GetOneId(uid, r.Context())
+		user, err := ctrl.svc.Admin.GetByID(r.Context(), uid)
 
 		if err != nil {
-			s.log.Error(err, nil)
+			ctrl.log.Error(err, nil)
 			server.RespondError(w, http.StatusInternalServerError, err)
 			return
 		}
@@ -49,12 +49,12 @@ func (s *Handlersv1) HandleAdminUserGet() http.HandlerFunc {
 	}
 }
 
-func (s *Handlersv1) HandleAdminUserCreate() http.HandlerFunc {
+func (ctrl *V1Controller) HandleAdminUserCreate() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		createData := dtos.UserCreate{}
+		createData := types.UserCreate{}
 
 		if err := server.Decode(r, &createData); err != nil {
-			s.log.Error(err, logger.Props{
+			ctrl.log.Error(err, logger.Props{
 				"scope":   "admin",
 				"details": "failed to decode user create data",
 			})
@@ -72,7 +72,7 @@ func (s *Handlersv1) HandleAdminUserCreate() http.HandlerFunc {
 		hashedPw, err := hasher.HashPassword(createData.Password)
 
 		if err != nil {
-			s.log.Error(err, logger.Props{
+			ctrl.log.Error(err, logger.Props{
 				"scope":   "admin",
 				"details": "failed to hash password",
 			})
@@ -82,10 +82,10 @@ func (s *Handlersv1) HandleAdminUserCreate() http.HandlerFunc {
 		}
 
 		createData.Password = hashedPw
-		userOut, err := s.repos.Users.Create(&createData, r.Context())
+		userOut, err := ctrl.svc.Admin.Create(r.Context(), &createData)
 
 		if err != nil {
-			s.log.Error(err, logger.Props{
+			ctrl.log.Error(err, logger.Props{
 				"scope":   "admin",
 				"details": "failed to create user",
 			})
@@ -98,13 +98,13 @@ func (s *Handlersv1) HandleAdminUserCreate() http.HandlerFunc {
 	}
 }
 
-func (s *Handlersv1) HandleAdminUserUpdate() http.HandlerFunc {
+func (ctrl *V1Controller) HandleAdminUserUpdate() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 	}
 }
 
-func (s *Handlersv1) HandleAdminUserDelete() http.HandlerFunc {
+func (ctrl *V1Controller) HandleAdminUserDelete() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 	}

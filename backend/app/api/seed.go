@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/hay-kot/git-web-template/backend/internal/dtos"
 	"github.com/hay-kot/git-web-template/backend/internal/repo"
+	"github.com/hay-kot/git-web-template/backend/internal/types"
 	"github.com/hay-kot/git-web-template/backend/pkgs/hasher"
 	"github.com/hay-kot/git-web-template/backend/pkgs/logger"
 )
@@ -31,7 +31,7 @@ func (a *app) EnsureAdministrator() {
 
 	pw, _ := hasher.HashPassword(DefaultPassword)
 
-	newSuperUser := dtos.UserCreate{
+	newSuperUser := types.UserCreate{
 		Name:        DefaultName,
 		Email:       DefaultEmail,
 		IsSuperuser: true,
@@ -43,7 +43,7 @@ func (a *app) EnsureAdministrator() {
 		"email": newSuperUser.Email,
 	})
 
-	_, err = a.repos.Users.Create(&newSuperUser, context.Background())
+	_, err = a.repos.Users.Create(context.Background(), &newSuperUser)
 
 	if err != nil {
 		a.logger.Fatal(err, nil)
@@ -59,9 +59,9 @@ func (a *app) SeedDatabase(repos *repo.AllRepos) {
 	for _, user := range a.conf.Seed.Users {
 
 		// Check if User Exists
-		usr, _ := repos.Users.GetOneEmail(user.Email, context.Background())
+		usr, _ := repos.Users.GetOneEmail(context.Background(), user.Email)
 
-		if usr.Id != uuid.Nil {
+		if usr.ID != uuid.Nil {
 			a.logger.Info("seed user already exists", logger.Props{
 				"user": user.Name,
 			})
@@ -77,12 +77,12 @@ func (a *app) SeedDatabase(repos *repo.AllRepos) {
 			})
 		}
 
-		_, err = repos.Users.Create(&dtos.UserCreate{
+		_, err = repos.Users.Create(context.Background(), &types.UserCreate{
 			Name:        user.Name,
 			Email:       user.Email,
 			IsSuperuser: user.IsSuperuser,
 			Password:    hashedPw,
-		}, context.Background())
+		})
 
 		if err != nil {
 			a.logger.Error(err, logger.Props{

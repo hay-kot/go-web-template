@@ -9,9 +9,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/hay-kot/git-web-template/backend/internal/dtos"
 	"github.com/hay-kot/git-web-template/backend/internal/mocks/chimocker"
 	"github.com/hay-kot/git-web-template/backend/internal/mocks/factories"
+	"github.com/hay-kot/git-web-template/backend/internal/types"
 	"github.com/hay-kot/git-web-template/backend/pkgs/server"
 	"github.com/stretchr/testify/assert"
 )
@@ -23,11 +23,11 @@ const (
 )
 
 type usersResponse struct {
-	Users []dtos.UserOut `json:"users"`
+	Users []types.UserOut `json:"users"`
 }
 
 type userResponse struct {
-	User dtos.UserOut `json:"user"`
+	User types.UserOut `json:"user"`
 }
 
 func Test_HandleAdminUserGetAll_Success(t *testing.T) {
@@ -37,7 +37,7 @@ func Test_HandleAdminUserGetAll_Success(t *testing.T) {
 	mockHandler.HandleAdminUserGetAll()(r, req)
 
 	response := usersResponse{
-		Users: []dtos.UserOut{},
+		Users: []types.UserOut{},
 	}
 
 	_ = json.Unmarshal(r.Body.Bytes(), &response)
@@ -60,19 +60,19 @@ func Test_HandleAdminUserGetAll_Success(t *testing.T) {
 func Test_HandleAdminUserGet_Success(t *testing.T) {
 	targetUser := users[2]
 	res := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodGet, fmt.Sprintf(UrlUserId, targetUser.Id), nil)
+	req := httptest.NewRequest(http.MethodGet, fmt.Sprintf(UrlUserId, targetUser.ID), nil)
 
-	req = chimocker.WithUrlParam(req, "id", fmt.Sprintf("%v", targetUser.Id))
+	req = chimocker.WithUrlParam(req, "id", fmt.Sprintf("%v", targetUser.ID))
 
 	mockHandler.HandleAdminUserGet()(res, req)
 	assert.Equal(t, http.StatusOK, res.Code)
 
 	response := userResponse{
-		User: dtos.UserOut{},
+		User: types.UserOut{},
 	}
 
 	_ = json.Unmarshal(res.Body.Bytes(), &response)
-	assert.Equal(t, targetUser.Id, response.User.Id)
+	assert.Equal(t, targetUser.ID, response.User.ID)
 }
 
 func Test_HandleAdminUserCreate_Success(t *testing.T) {
@@ -90,14 +90,14 @@ func Test_HandleAdminUserCreate_Success(t *testing.T) {
 
 	assert.Equal(t, http.StatusCreated, r.Code)
 
-	usr, err := mockHandler.repos.Users.GetOneEmail(payload.Email, context.Background())
+	usr, err := mockHandler.svc.Admin.GetByEmail(context.Background(), payload.Email)
 
 	assert.NoError(t, err)
 	assert.Equal(t, payload.Email, usr.Email)
 	assert.Equal(t, payload.Name, usr.Name)
 	assert.NotEqual(t, payload.Password, usr.Password) // smoke test - check password is hashed
 
-	_ = mockHandler.repos.Users.Delete(usr.Id, context.Background())
+	_ = mockHandler.svc.Admin.Delete(context.Background(), usr.ID)
 }
 
 func Test_HandleAdminUserUpdate_Success(t *testing.T) {

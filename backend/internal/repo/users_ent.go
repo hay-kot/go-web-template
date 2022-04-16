@@ -6,25 +6,25 @@ import (
 	"github.com/google/uuid"
 	"github.com/hay-kot/git-web-template/backend/ent"
 	"github.com/hay-kot/git-web-template/backend/ent/user"
-	"github.com/hay-kot/git-web-template/backend/internal/dtos"
+	"github.com/hay-kot/git-web-template/backend/internal/types"
 )
 
 type EntUserRepository struct {
 	db *ent.Client
 }
 
-func (e *EntUserRepository) toUserOut(usr *dtos.UserOut, entUsr *ent.User) {
-	usr.Id = entUsr.ID
+func (e *EntUserRepository) toUserOut(usr *types.UserOut, entUsr *ent.User) {
+	usr.ID = entUsr.ID
 	usr.Password = entUsr.Password
 	usr.Name = entUsr.Name
 	usr.Email = entUsr.Email
 	usr.IsSuperuser = entUsr.IsSuperuser
 }
 
-func (e *EntUserRepository) GetOneId(id uuid.UUID, ctx context.Context) (dtos.UserOut, error) {
+func (e *EntUserRepository) GetOneId(ctx context.Context, id uuid.UUID) (types.UserOut, error) {
 	usr, err := e.db.User.Query().Where(user.ID(id)).Only(ctx)
 
-	usrOut := dtos.UserOut{}
+	usrOut := types.UserOut{}
 
 	if err != nil {
 		return usrOut, err
@@ -35,10 +35,10 @@ func (e *EntUserRepository) GetOneId(id uuid.UUID, ctx context.Context) (dtos.Us
 	return usrOut, nil
 }
 
-func (e *EntUserRepository) GetOneEmail(email string, ctx context.Context) (dtos.UserOut, error) {
+func (e *EntUserRepository) GetOneEmail(ctx context.Context, email string) (types.UserOut, error) {
 	usr, err := e.db.User.Query().Where(user.Email(email)).Only(ctx)
 
-	usrOut := dtos.UserOut{}
+	usrOut := types.UserOut{}
 
 	if err != nil {
 		return usrOut, err
@@ -49,17 +49,17 @@ func (e *EntUserRepository) GetOneEmail(email string, ctx context.Context) (dtos
 	return usrOut, nil
 }
 
-func (e *EntUserRepository) GetAll(ctx context.Context) ([]dtos.UserOut, error) {
+func (e *EntUserRepository) GetAll(ctx context.Context) ([]types.UserOut, error) {
 	users, err := e.db.User.Query().All(ctx)
 
 	if err != nil {
 		return nil, err
 	}
 
-	var usrs []dtos.UserOut
+	var usrs []types.UserOut
 
 	for _, usr := range users {
-		usrOut := dtos.UserOut{}
+		usrOut := types.UserOut{}
 		e.toUserOut(&usrOut, usr)
 		usrs = append(usrs, usrOut)
 	}
@@ -67,9 +67,9 @@ func (e *EntUserRepository) GetAll(ctx context.Context) ([]dtos.UserOut, error) 
 	return usrs, nil
 }
 
-func (e *EntUserRepository) Create(usr *dtos.UserCreate, ctx context.Context) (dtos.UserOut, error) {
+func (e *EntUserRepository) Create(ctx context.Context, usr *types.UserCreate) (types.UserOut, error) {
 	err := usr.Validate()
-	usrOut := dtos.UserOut{}
+	usrOut := types.UserOut{}
 
 	if err != nil {
 		return usrOut, err
@@ -88,12 +88,12 @@ func (e *EntUserRepository) Create(usr *dtos.UserCreate, ctx context.Context) (d
 	return usrOut, err
 }
 
-func (e *EntUserRepository) Update(user *dtos.UserCreate, ctx context.Context) error {
+func (e *EntUserRepository) Update(ctx context.Context, user *types.UserCreate) error {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (e *EntUserRepository) Delete(id uuid.UUID, ctx context.Context) error {
+func (e *EntUserRepository) Delete(ctx context.Context, id uuid.UUID) error {
 	_, err := e.db.User.Delete().Where(user.ID(id)).Exec(ctx)
 	return err
 }
@@ -103,17 +103,17 @@ func (e *EntUserRepository) DeleteAll(ctx context.Context) error {
 	return err
 }
 
-func (e *EntUserRepository) GetSuperusers(ctx context.Context) ([]dtos.UserOut, error) {
+func (e *EntUserRepository) GetSuperusers(ctx context.Context) ([]types.UserOut, error) {
 	users, err := e.db.User.Query().Where(user.IsSuperuser(true)).All(ctx)
 
 	if err != nil {
 		return nil, err
 	}
 
-	var usrs []dtos.UserOut
+	var usrs []types.UserOut
 
 	for _, usr := range users {
-		usrOut := dtos.UserOut{}
+		usrOut := types.UserOut{}
 		e.toUserOut(&usrOut, usr)
 		usrs = append(usrs, usrOut)
 	}

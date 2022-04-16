@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 
@@ -40,8 +39,6 @@ func run(cfg *config.Config) error {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
 
-	fmt.Print(cfg.Database.GetUrl())
-
 	// Create App
 	a := &app{
 		repos: repo.EntAllRepos(c),
@@ -63,28 +60,6 @@ func run(cfg *config.Config) error {
 						Name:   "add",
 						Usage:  "add a new user",
 						Action: a.UserCreate,
-						Flags: []cli.Flag{
-							&cli.StringFlag{
-								Name:     "name",
-								Usage:    "name of the user to add",
-								Required: true,
-							},
-							&cli.StringFlag{
-								Name:     "email",
-								Usage:    "email of the user to add",
-								Required: true,
-							},
-							&cli.StringFlag{
-								Name:     "password",
-								Usage:    "password of the user to add",
-								Required: true,
-							},
-							&cli.BoolFlag{
-								Name:        "is-super",
-								Usage:       "password of the user to add",
-								DefaultText: "false",
-							},
-						},
 					},
 					{
 						Name:   "delete",

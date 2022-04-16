@@ -7,35 +7,45 @@ import (
 	"text/tabwriter"
 
 	"github.com/google/uuid"
-	"github.com/hay-kot/git-web-template/backend/internal/dtos"
+	"github.com/hay-kot/git-web-template/backend/app/cli/reader"
+	"github.com/hay-kot/git-web-template/backend/internal/types"
 	"github.com/hay-kot/git-web-template/backend/pkgs/hasher"
 	"github.com/urfave/cli/v2"
 )
 
 func (a *app) UserCreate(c *cli.Context) error {
+	var defaultValidators = []reader.StringValidator{
+		reader.StringRequired,
+		reader.StringNoLeadingOrTrailingWhitespace,
+	}
 	// Get Flags
-	name := c.String("name")
-	password := c.String("password")
-	email := c.String("email")
-	isSuper := c.Bool("is-super")
+	name := reader.ReadString("Name: ",
+		defaultValidators...,
+	)
+	password := reader.ReadString("Password: ",
+		defaultValidators...,
+	)
 
-	fmt.Println("Creating Superuser")
-	fmt.Printf("Name: %s\n", name)
-	fmt.Printf("Email: %s\n", email)
+	email := reader.ReadString("Email: ",
+		reader.StringRequired,
+		reader.StringNoLeadingOrTrailingWhitespace,
+		reader.StringContainsAt,
+	)
+	isSuper := reader.ReadBool("Is Superuser?")
 
 	pwHash, err := hasher.HashPassword(password)
 	if err != nil {
 		return err
 	}
 
-	usr := &dtos.UserCreate{
+	usr := &types.UserCreate{
 		Name:        name,
 		Email:       email,
 		Password:    pwHash,
 		IsSuperuser: isSuper,
 	}
 
-	_, err = a.repos.Users.Create(usr, context.Background())
+	_, err = a.repos.Users.Create(context.Background(), usr)
 
 	if err == nil {
 		fmt.Println("Super user created")
@@ -59,7 +69,7 @@ func (a *app) UserDelete(c *cli.Context) error {
 		return nil
 	}
 
-	err = a.repos.Users.Delete(uid, context.Background())
+	err = a.repos.Users.Delete(context.Background(), uid)
 
 	if err == nil {
 		fmt.Printf("%v User(s) deleted (id=%v)\n", 1, id)
@@ -88,7 +98,7 @@ func (a *app) UserList(c *cli.Context) error {
 	}
 
 	for _, u := range users {
-		_, _ = fmt.Fprintf(tabWriter, "%v\t%s\t%s\t%v\n", u.Id, u.Name, u.Email, u.IsSuperuser)
+		_, _ = fmt.Fprintf(tabWriter, "%v\t%s\t%s\t%v\n", u.ID, u.Name, u.Email, u.IsSuperuser)
 	}
 
 	return nil

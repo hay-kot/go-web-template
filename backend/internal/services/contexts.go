@@ -3,7 +3,7 @@ package services
 import (
 	"context"
 
-	"github.com/hay-kot/git-web-template/backend/internal/dtos"
+	"github.com/hay-kot/git-web-template/backend/internal/types"
 )
 
 type contextKeys struct {
@@ -11,28 +11,28 @@ type contextKeys struct {
 }
 
 var (
-	ContextUser      = &contextKeys{name: "user"}
+	ContextUser      = &contextKeys{name: "User"}
 	ContextUserToken = &contextKeys{name: "UserToken"}
 )
 
-// SetAuthContext is a helper function that sets the ContextUser and ContextUserToken
+// SetUserContext is a helper function that sets the ContextUser and ContextUserToken
 // values within the context of a web request (or any context).
-func SetAuthContext(ctx context.Context, user *dtos.UserOut, token string) context.Context {
+func SetUserContext(ctx context.Context, user *types.UserOut, token string) context.Context {
 	ctx = context.WithValue(ctx, ContextUser, user)
 	ctx = context.WithValue(ctx, ContextUserToken, token)
 	return ctx
 }
 
-// UserFromContext is a helper function that returns the user from the context.
-func UserFromContext(ctx context.Context) *dtos.UserOut {
+// UseUserContext is a helper function that returns the user from the context.
+func UseUserContext(ctx context.Context) *types.UserOut {
 	if val := ctx.Value(ContextUser); val != nil {
-		return val.(*dtos.UserOut)
+		return val.(*types.UserOut)
 	}
 	return nil
 }
 
-// UserTokenFromContext is a helper function that returns the user token from the context.
-func UserTokenFromContext(ctx context.Context) string {
+// UseTokenContext is a helper function that returns the user token from the context.
+func UseTokenContext(ctx context.Context) string {
 	if val := ctx.Value(ContextUserToken); val != nil {
 		return val.(string)
 	}

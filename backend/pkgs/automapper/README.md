@@ -23,7 +23,7 @@ package main
 
 import (
 	"github.com/mealie-recipes/mealie-analytics/ent"
-	"github.com/mealie-recipes/mealie-analytics/internal/dtos"
+	"github.com/mealie-recipes/mealie-analytics/internal/types"
 	"github.com/mealie-recipes/mealie-analytics/pkgs/automapper"
 )
 
@@ -35,8 +35,8 @@ func getMappers() []automapper.AutoMapper {
 			Prefix:  "analytics", // generating file prefix -> analytics_automapper.go
 			Name:    "Mealie Analytics", // For console output
 			Schema: automapper.Schema{
-				Type:   dtos.Analytics{}, 
-				Prefix: "dtos", // Package namespace
+				Type:   types.Analytics{}, 
+				Prefix: "types", // Package namespace
 			},
 			Model: automapper.Model{
 				Type:   ent.Analytics{},

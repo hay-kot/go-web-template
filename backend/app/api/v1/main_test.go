@@ -4,33 +4,33 @@ import (
 	"context"
 	"testing"
 
-	"github.com/hay-kot/git-web-template/backend/internal/dtos"
 	"github.com/hay-kot/git-web-template/backend/internal/mocks"
 	"github.com/hay-kot/git-web-template/backend/internal/mocks/factories"
+	"github.com/hay-kot/git-web-template/backend/internal/types"
 )
 
-var mockHandler = &Handlersv1{}
-var users = []dtos.UserOut{}
+var mockHandler = &V1Controller{}
+var users = []types.UserOut{}
 
 func userPool() func() {
-	create := []dtos.UserCreate{
+	create := []types.UserCreate{
 		factories.UserFactory(),
 		factories.UserFactory(),
 		factories.UserFactory(),
 		factories.UserFactory(),
 	}
 
-	userOut := []dtos.UserOut{}
+	userOut := []types.UserOut{}
 
 	for _, user := range create {
-		usrOut, _ := mockHandler.repos.Users.Create(&user, context.Background())
+		usrOut, _ := mockHandler.svc.Admin.Create(context.Background(), &user)
 		userOut = append(userOut, usrOut)
 	}
 
 	users = userOut
 
 	purge := func() {
-		mockHandler.repos.Users.DeleteAll(context.Background())
+		mockHandler.svc.Admin.DeleteAll(context.Background())
 	}
 
 	return purge
@@ -40,7 +40,7 @@ func TestMain(m *testing.M) {
 	// Set Handler Vars
 	mockHandler.log = mocks.GetStructLogger()
 	repos, closeDb := mocks.GetEntRepos()
-	mockHandler.repos = repos
+	mockHandler.svc = mocks.GetMockServices(repos)
 
 	defer closeDb()
 

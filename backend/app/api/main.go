@@ -10,6 +10,7 @@ import (
 	"github.com/hay-kot/git-web-template/backend/ent"
 	"github.com/hay-kot/git-web-template/backend/internal/config"
 	"github.com/hay-kot/git-web-template/backend/internal/repo"
+	"github.com/hay-kot/git-web-template/backend/internal/services"
 	"github.com/hay-kot/git-web-template/backend/pkgs/logger"
 	"github.com/hay-kot/git-web-template/backend/pkgs/server"
 	_ "github.com/mattn/go-sqlite3"
@@ -70,6 +71,7 @@ func run(cfg *config.Config) error {
 
 	app.db = c
 	app.repos = repo.EntAllRepos(c)
+	app.services = services.NewServices(app.repos)
 
 	// =========================================================================
 	// Start Server

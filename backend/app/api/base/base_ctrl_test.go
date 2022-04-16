@@ -8,8 +8,8 @@ import (
 	"github.com/hay-kot/git-web-template/backend/internal/mocks"
 )
 
-func GetTestHandler(t *testing.T) *Handlersv1 {
-	return NewHandlerV1(mocks.GetStructLogger(), nil)
+func GetTestHandler(t *testing.T) *BaseController {
+	return NewBaseController(mocks.GetStructLogger(), nil)
 }
 
 func TestHandlersv1_HandleBase(t *testing.T) {

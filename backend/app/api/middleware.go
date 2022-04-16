@@ -53,7 +53,7 @@ func (a *app) mwAuthToken(next http.Handler) http.Handler {
 		hash := hasher.HashToken(requestToken)
 
 		// Check the database for the token
-		usr, err := a.repos.AuthTokens.GetUserFromToken(hash, r.Context())
+		usr, err := a.repos.AuthTokens.GetUserFromToken(r.Context(), hash)
 
 		if err != nil {
 			a.logger.Error(err, logger.Props{
@@ -64,10 +64,28 @@ func (a *app) mwAuthToken(next http.Handler) http.Handler {
 			return
 		}
 
-		r = r.WithContext(services.SetAuthContext(r.Context(), &usr, requestToken))
+		r = r.WithContext(services.SetUserContext(r.Context(), &usr, requestToken))
 
 		next.ServeHTTP(w, r)
 	})
+}
+
+// mwAdminOnly is a middleware that extends the mwAuthToken middleware to only allow
+// requests from superusers.
+func (a *app) mwAdminOnly(next http.Handler) http.Handler {
+
+	mw := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		usr := services.UseUserContext(r.Context())
+
+		if !usr.IsSuperuser {
+			server.RespondUnauthorized(w)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
+
+	return a.mwAuthToken(mw)
 }
 
 // mqStripTrailingSlash is a middleware that will strip trailing slashes from the request path.
