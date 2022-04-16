@@ -42,3 +42,8 @@ tasks:
     cmds:
       - cd backend && docker-compose up --build
     silent: true
+
+  generate:types:
+    cmds:
+      - cd backend && go run ./app/generator
+    silent: true
