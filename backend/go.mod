@@ -1,6 +1,6 @@
 module github.com/hay-kot/git-web-template/backend
 
-go 1.17
+go 1.18
 
 require (
 	entgo.io/ent v0.10.0
@@ -9,6 +9,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/mattn/go-sqlite3 v1.14.10
 	github.com/stretchr/testify v1.7.1-0.20210427113832-6241f9ab9942
+	github.com/tkrajina/typescriptify-golang-structs v0.1.7
 	github.com/urfave/cli/v2 v2.3.0
 	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5
 )
@@ -26,6 +27,7 @@ require (
 	github.com/mitchellh/go-wordwrap v0.0.0-20150314170334-ad45545899c7 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
+	github.com/tkrajina/go-reflector v0.5.5 // indirect
 	github.com/zclconf/go-cty v1.8.0 // indirect
 	golang.org/x/mod v0.5.1 // indirect
 	golang.org/x/text v0.3.7 // indirect

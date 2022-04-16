@@ -14,8 +14,8 @@ var (
 // UserIn is a basic user input struct containing only the fields that are
 // required for user creation.
 type UserIn struct {
-	Name     string `json:"name,omitempty"`
-	Email    string `json:"email,omitempty"`
+	Name     string `json:"name"`
+	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
@@ -41,8 +41,8 @@ func (u *UserCreate) Validate() error {
 
 type UserOut struct {
 	ID          uuid.UUID `json:"id"`
-	Name        string    `json:"name,omitempty"`
-	Email       string    `json:"email,omitempty"`
+	Name        string    `json:"name"`
+	Email       string    `json:"email"`
 	Password    string    `json:"-"`
 	IsSuperuser bool      `json:"isSuperuser"`
 }
@@ -54,6 +54,6 @@ func (usr *UserOut) IsNull() bool {
 
 type UserUpdate struct {
 	ID    uuid.UUID `json:"id"`
-	Name  string    `json:"name,omitempty"`
-	Email string    `json:"email,omitempty"`
+	Name  string    `json:"name"`
+	Email string    `json:"email"`
 }

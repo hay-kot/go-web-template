@@ -6,6 +6,16 @@ import (
 	"github.com/google/uuid"
 )
 
+type LoginForm struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+type TokenResponse struct {
+	BearerToken string    `json:"token"`
+	ExpiresAt   time.Time `json:"expiresAt"`
+}
+
 type UserAuthTokenDetail struct {
 	Raw       string    `json:"raw"`
 	ExpiresAt time.Time `json:"expiresAt"`

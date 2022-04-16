@@ -3,27 +3,17 @@ package v1
 import (
 	"errors"
 	"net/http"
-	"time"
 
 	"github.com/hay-kot/git-web-template/backend/internal/services"
+	"github.com/hay-kot/git-web-template/backend/internal/types"
 	"github.com/hay-kot/git-web-template/backend/pkgs/logger"
 	"github.com/hay-kot/git-web-template/backend/pkgs/server"
 )
 
-type LoginForm struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
-
-type TokenResponse struct {
-	BearerToken string    `json:"token"`
-	ExpiresAt   time.Time `json:"expiresAt"`
-}
-
 // handleAuthLogin returns a handler to handle username/password authentication for users of the API.
 func (ctrl *V1Controller) HandleAuthLogin() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		loginForm := LoginForm{}
+		loginForm := types.LoginForm{}
 		err := server.Decode(r, &loginForm)
 
 		if err != nil {
@@ -33,7 +23,7 @@ func (ctrl *V1Controller) HandleAuthLogin() http.HandlerFunc {
 
 		newToken, err := ctrl.svc.User.Login(r.Context(), loginForm.Username, loginForm.Password)
 
-		err = server.Respond(w, http.StatusOK, TokenResponse{
+		err = server.Respond(w, http.StatusOK, types.TokenResponse{
 			BearerToken: "Bearer " + newToken.Raw,
 			ExpiresAt:   newToken.ExpiresAt,
 		})
