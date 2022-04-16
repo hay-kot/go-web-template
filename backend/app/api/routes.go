@@ -41,7 +41,7 @@ func (a *app) newRouter(repos *repo.AllRepos) *chi.Mux {
 	})
 
 	r.Group(func(r chi.Router) {
-		r.Use(a.mwAuthToken)
+		r.Use(a.mwAdminOnly)
 		r.Get(v1Base("/admin/users"), v1Handlers.HandleAdminUserGetAll())
 		r.Post(v1Base("/admin/users"), v1Handlers.HandleAdminUserCreate())
 		r.Get(v1Base("/admin/users/{id}"), v1Handlers.HandleAdminUserGet())

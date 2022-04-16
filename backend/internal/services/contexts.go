@@ -23,16 +23,16 @@ func SetUserContext(ctx context.Context, user *types.UserOut, token string) cont
 	return ctx
 }
 
-// GetUserContext is a helper function that returns the user from the context.
-func GetUserContext(ctx context.Context) *types.UserOut {
+// UseUserContext is a helper function that returns the user from the context.
+func UseUserContext(ctx context.Context) *types.UserOut {
 	if val := ctx.Value(ContextUser); val != nil {
 		return val.(*types.UserOut)
 	}
 	return nil
 }
 
-// GetUserTokenFromContext is a helper function that returns the user token from the context.
-func GetUserTokenFromContext(ctx context.Context) string {
+// UseTokenContext is a helper function that returns the user token from the context.
+func UseTokenContext(ctx context.Context) string {
 	if val := ctx.Value(ContextUserToken); val != nil {
 		return val.(string)
 	}

@@ -40,7 +40,7 @@ func (ctrl *V1Controller) HandleAuthLogin() http.HandlerFunc {
 
 func (ctrl *V1Controller) HandleAuthLogout() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		token := services.GetUserTokenFromContext(r.Context())
+		token := services.UseTokenContext(r.Context())
 
 		if token == "" {
 			server.RespondError(w, http.StatusUnauthorized, errors.New("no token within request context"))
@@ -62,7 +62,7 @@ func (ctrl *V1Controller) HandleAuthLogout() http.HandlerFunc {
 // This does not validate that the user still exists within the database.
 func (ctrl *V1Controller) HandleAuthRefresh() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		requestToken := services.GetUserTokenFromContext(r.Context())
+		requestToken := services.UseTokenContext(r.Context())
 
 		if requestToken == "" {
 			server.RespondError(w, http.StatusUnauthorized, errors.New("no user token found"))

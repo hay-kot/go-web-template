@@ -10,7 +10,7 @@ import (
 
 func (ctrl *V1Controller) HandleUserSelf() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		token := services.GetUserTokenFromContext(r.Context())
+		token := services.UseTokenContext(r.Context())
 
 		usr, err := ctrl.svc.User.GetSelf(r.Context(), token)
 
