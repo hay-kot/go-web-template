@@ -49,6 +49,9 @@ jobs:
         with:
           go-version: 1.18
 
+      - name: Build API
+        run: task api:build
+
       - name: Setup Node
         working-directory: ./client
         run: npm install
