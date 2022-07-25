@@ -1,7 +1,7 @@
 name: Build Docker Image
 
 on:
-  release:
+  push:
     branches: [main]
 
 jobs:
@@ -15,6 +15,8 @@ jobs:
           go-version: 1.18
       - name: login to container registry
         run: docker login ghcr.io -username hay-kot --password $CR_PAT
+        env:
+          CR_PAT: ${{ secrets.CR_PAT }}
       - name: Build Docker Image
         run: cd backend && docker build -t ghcr.io/hay-kot/go-web-template:latest .
       - name: push to container registry
