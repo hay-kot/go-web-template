@@ -16,6 +16,17 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+// @title                       Go API Templates
+// @version                     1.0
+// @description                 This is a simple Rest API Server Template that implements some basic User and Authentication patterns to help you get started and bootstrap your next project!.
+// @contact.name                Don't
+// @license.name                MIT
+// @host                        localhost:7745
+// @BasePath                    /api
+// @securityDefinitions.apikey  Bearer
+// @in                          header
+// @name                        Authorization
+// @description                 "Type 'Bearer TOKEN' to correctly set the API Key"
 func main() {
 	cfgFile := "config.yml"
 

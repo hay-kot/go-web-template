@@ -10,18 +10,40 @@ import (
 	"github.com/hay-kot/git-web-template/backend/pkgs/server"
 )
 
-// handleAuthLogin returns a handler to handle username/password authentication for users of the API.
+// HandleAuthLogin godoc
+// @Summary  User Login
+// @Tags     Authentication
+// @Accept   x-www-form-urlencoded
+// @Param    username  formData  string  false  "string"  example(admin@admin.com)
+// @Param    password  formData  string  false  "string"  example(admin)
+// @Produce  json
+// @Success  200  {object}  types.TokenResponse
+// @Router   /v1/users/login [POST]
 func (ctrl *V1Controller) HandleAuthLogin() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		loginForm := types.LoginForm{}
-		err := server.Decode(r, &loginForm)
+		err := r.ParseForm()
 
 		if err != nil {
-			server.RespondError(w, http.StatusBadRequest, err)
+			server.Respond(w, http.StatusBadRequest, server.Wrap(err))
+			return
+		}
+
+		loginForm := types.LoginForm{
+			Username: r.PostFormValue("username"),
+			Password: r.PostFormValue("password"),
+		}
+
+		if loginForm.Username == "" || loginForm.Password == "" {
+			server.RespondError(w, http.StatusBadRequest, errors.New("username and password are required"))
 			return
 		}
 
 		newToken, err := ctrl.svc.User.Login(r.Context(), loginForm.Username, loginForm.Password)
+
+		if err != nil {
+			server.RespondError(w, http.StatusUnauthorized, err)
+			return
+		}
 
 		err = server.Respond(w, http.StatusOK, types.TokenResponse{
 			BearerToken: "Bearer " + newToken.Raw,
@@ -32,15 +54,20 @@ func (ctrl *V1Controller) HandleAuthLogin() http.HandlerFunc {
 			ctrl.log.Error(err, logger.Props{
 				"user": loginForm.Username,
 			})
-
 			return
 		}
 	}
 }
 
+// HandleAuthLogout godoc
+// @Summary   User Logout
+// @Tags      Authentication
+// @Success   204
+// @Router    /v1/users/logout [POST]
+// @Security  Bearer
 func (ctrl *V1Controller) HandleAuthLogout() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		token := services.UseTokenContext(r.Context())
+		token := services.UseTokenCtx(r.Context())
 
 		if token == "" {
 			server.RespondError(w, http.StatusUnauthorized, errors.New("no token within request context"))
@@ -54,15 +81,21 @@ func (ctrl *V1Controller) HandleAuthLogout() http.HandlerFunc {
 			return
 		}
 
-		err = server.Respond(w, http.StatusOK, nil)
+		err = server.Respond(w, http.StatusNoContent, nil)
 	}
 }
 
-// handleAuthRefresh returns a handler that will issue a new token from an existing token.
-// This does not validate that the user still exists within the database.
+// HandleAuthLogout godoc
+// @Summary      User Token Refresh
+// @Description  handleAuthRefresh returns a handler that will issue a new token from an existing token.
+// @Description  This does not validate that the user still exists within the database.
+// @Tags         Authentication
+// @Success      200
+// @Router       /v1/users/refresh [GET]
+// @Security     Bearer
 func (ctrl *V1Controller) HandleAuthRefresh() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		requestToken := services.UseTokenContext(r.Context())
+		requestToken := services.UseTokenCtx(r.Context())
 
 		if requestToken == "" {
 			server.RespondError(w, http.StatusUnauthorized, errors.New("no user token found"))

@@ -16,7 +16,7 @@ func Test_EntAuthTokenRepo_CreateToken(t *testing.T) {
 
 	user := UserFactory()
 
-	userOut, _ := testRepos.Users.Create(ctx, &user)
+	userOut, _ := testRepos.Users.Create(ctx, user)
 
 	expiresAt := time.Now().Add(time.Hour)
 
@@ -42,7 +42,7 @@ func Test_EntAuthTokenRepo_GetUserByToken(t *testing.T) {
 	ctx := context.Background()
 
 	user := UserFactory()
-	userOut, _ := testRepos.Users.Create(ctx, &user)
+	userOut, _ := testRepos.Users.Create(ctx, user)
 
 	expiresAt := time.Now().Add(time.Hour)
 	generatedToken := hasher.GenerateToken()
@@ -71,7 +71,7 @@ func Test_EntAuthTokenRepo_PurgeExpiredTokens(t *testing.T) {
 	ctx := context.Background()
 
 	user := UserFactory()
-	userOut, _ := testRepos.Users.Create(ctx, &user)
+	userOut, _ := testRepos.Users.Create(ctx, user)
 
 	createdTokens := []types.UserAuthToken{}
 

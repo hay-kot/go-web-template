@@ -64,7 +64,7 @@ func (a *app) mwAuthToken(next http.Handler) http.Handler {
 			return
 		}
 
-		r = r.WithContext(services.SetUserContext(r.Context(), &usr, requestToken))
+		r = r.WithContext(services.SetUserCtx(r.Context(), &usr, requestToken))
 
 		next.ServeHTTP(w, r)
 	})
@@ -75,7 +75,7 @@ func (a *app) mwAuthToken(next http.Handler) http.Handler {
 func (a *app) mwAdminOnly(next http.Handler) http.Handler {
 
 	mw := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		usr := services.UseUserContext(r.Context())
+		usr := services.UseUserCtx(r.Context())
 
 		if !usr.IsSuperuser {
 			server.RespondUnauthorized(w)

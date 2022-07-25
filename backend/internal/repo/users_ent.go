@@ -67,7 +67,7 @@ func (e *EntUserRepository) GetAll(ctx context.Context) ([]types.UserOut, error)
 	return usrs, nil
 }
 
-func (e *EntUserRepository) Create(ctx context.Context, usr *types.UserCreate) (types.UserOut, error) {
+func (e *EntUserRepository) Create(ctx context.Context, usr types.UserCreate) (types.UserOut, error) {
 	err := usr.Validate()
 	usrOut := types.UserOut{}
 
@@ -88,9 +88,28 @@ func (e *EntUserRepository) Create(ctx context.Context, usr *types.UserCreate) (
 	return usrOut, err
 }
 
-func (e *EntUserRepository) Update(ctx context.Context, user *types.UserCreate) error {
-	//TODO implement me
-	panic("implement me")
+func (e *EntUserRepository) Update(ctx context.Context, ID uuid.UUID, data types.UserUpdate) error {
+	bldr := e.db.User.Update().Where(user.ID(ID))
+
+	if data.Name != nil {
+		bldr = bldr.SetName(*data.Name)
+	}
+
+	if data.Email != nil {
+		bldr = bldr.SetEmail(*data.Email)
+	}
+
+	// TODO: FUTURE
+	// if data.Password != nil {
+	// 	bldr = bldr.SetPassword(*data.Password)
+	// }
+
+	// if data.IsSuperuser != nil {
+	// 	bldr = bldr.SetIsSuperuser(*data.IsSuperuser)
+	// }
+
+	_, err := bldr.Save(ctx)
+	return err
 }
 
 func (e *EntUserRepository) Delete(ctx context.Context, id uuid.UUID) error {

@@ -6,8 +6,10 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/hay-kot/git-web-template/backend/app/api/base"
+	_ "github.com/hay-kot/git-web-template/backend/app/api/docs"
 	v1 "github.com/hay-kot/git-web-template/backend/app/api/v1"
 	"github.com/hay-kot/git-web-template/backend/internal/repo"
+	httpSwagger "github.com/swaggo/http-swagger" // http-swagger middleware
 )
 
 const prefix = "/api"
@@ -19,6 +21,10 @@ func (a *app) newRouter(repos *repo.AllRepos) *chi.Mux {
 
 	// =========================================================================
 	// Base Routes
+	r.Get("/swagger/*", httpSwagger.Handler(
+		// TODO: Set Dynamically
+		httpSwagger.URL("http://localhost:7745/swagger/doc.json"), //The url pointing to API definition
+	))
 
 	// Server Favicon
 	r.Get("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
@@ -26,8 +32,7 @@ func (a *app) newRouter(repos *repo.AllRepos) *chi.Mux {
 	})
 
 	baseHandler := base.NewBaseController(a.logger, a.server)
-	r.Get(prefix, baseHandler.HandleBase("v1"))
-	r.Get(prefix+"/status", baseHandler.HandleReady(func() bool { return true }))
+	r.Get(prefix+"/status", baseHandler.HandleBase(func() bool { return true }, "v1"))
 
 	// =========================================================================
 	// API Version 1
@@ -37,7 +42,10 @@ func (a *app) newRouter(repos *repo.AllRepos) *chi.Mux {
 	r.Group(func(r chi.Router) {
 		r.Use(a.mwAuthToken)
 		r.Get(v1Base("/users/self"), v1Handlers.HandleUserSelf())
+		r.Put(v1Base("/users/self"), v1Handlers.HandleUserUpdate())
+		r.Put(v1Base("/users/self/password"), v1Handlers.HandleUserUpdatePassword())
 		r.Post(v1Base("/users/logout"), v1Handlers.HandleAuthLogout())
+		r.Get(v1Base("/users/refresh"), v1Handlers.HandleAuthRefresh())
 	})
 
 	r.Group(func(r chi.Router) {
@@ -45,8 +53,8 @@ func (a *app) newRouter(repos *repo.AllRepos) *chi.Mux {
 		r.Get(v1Base("/admin/users"), v1Handlers.HandleAdminUserGetAll())
 		r.Post(v1Base("/admin/users"), v1Handlers.HandleAdminUserCreate())
 		r.Get(v1Base("/admin/users/{id}"), v1Handlers.HandleAdminUserGet())
-		r.Put(v1Base("/admin/users/{id}"), v1Handlers.HandleAdminUserCreate())
-		r.Delete(v1Base("/admin/users/{id}"), v1Handlers.HandleAdminUserCreate())
+		r.Put(v1Base("/admin/users/{id}"), v1Handlers.HandleAdminUserUpdate())
+		r.Delete(v1Base("/admin/users/{id}"), v1Handlers.HandleAdminUserDelete())
 	})
 
 	return r

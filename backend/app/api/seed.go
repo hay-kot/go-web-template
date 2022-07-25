@@ -43,7 +43,7 @@ func (a *app) EnsureAdministrator() {
 		"email": newSuperUser.Email,
 	})
 
-	_, err = a.repos.Users.Create(context.Background(), &newSuperUser)
+	_, err = a.repos.Users.Create(context.Background(), newSuperUser)
 
 	if err != nil {
 		a.logger.Fatal(err, nil)
@@ -77,7 +77,7 @@ func (a *app) SeedDatabase(repos *repo.AllRepos) {
 			})
 		}
 
-		_, err = repos.Users.Create(context.Background(), &types.UserCreate{
+		_, err = repos.Users.Create(context.Background(), types.UserCreate{
 			Name:        user.Name,
 			Email:       user.Email,
 			IsSuperuser: user.IsSuperuser,

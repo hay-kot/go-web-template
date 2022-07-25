@@ -13,8 +13,18 @@ tasks:
 
   api:
     cmds:
+      - cd backend/app/api/ && swag fmt
+      - cd backend/app/api/ && swag init --dir=./,../../internal,../../pkgs
+      # - |
+      #   npx swagger-typescript-api \
+      #     --path ./backend/app/api/docs/swagger.json \
+      #     --output ./client/auto-client \
+      #     --module-name-first-tag \
+      #     --modular
       - cd backend && go run ./app/api/ {{.CLI_ARGS}}
-    silent: true
+    silent: false
+    sources:
+      - ./backend/**/*.go
 
   api:build:
     cmds:

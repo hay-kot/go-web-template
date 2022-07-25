@@ -38,7 +38,7 @@ func (a *app) UserCreate(c *cli.Context) error {
 		return err
 	}
 
-	usr := &types.UserCreate{
+	usr := types.UserCreate{
 		Name:        name,
 		Email:       email,
 		Password:    pwHash,

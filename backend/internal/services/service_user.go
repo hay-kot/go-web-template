@@ -28,6 +28,16 @@ func (svc *UserService) GetSelf(ctx context.Context, requestToken string) (types
 	return svc.repos.AuthTokens.GetUserFromToken(ctx, hash)
 }
 
+func (svc *UserService) UpdateSelf(ctx context.Context, ID uuid.UUID, data types.UserUpdate) (types.UserOut, error) {
+	err := svc.repos.Users.Update(ctx, ID, data)
+
+	if err != nil {
+		return types.UserOut{}, err
+	}
+
+	return svc.repos.Users.GetOneId(ctx, ID)
+}
+
 // ============================================================================
 // User Authentication
 
