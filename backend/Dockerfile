@@ -20,6 +20,6 @@ RUN chmod +x /app/api
 RUN chmod +x /bin/manage
 
 LABEL Name=gowebtemplate Version=0.0.1
-EXPOSE 3915
+EXPOSE 7745
 WORKDIR /app
 CMD [ "./api" ]
