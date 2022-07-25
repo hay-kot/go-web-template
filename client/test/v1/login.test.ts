@@ -32,8 +32,8 @@ describe("POST /api/v1/users/logout", function () {
       expect(res.statusText).toBe("OK");
 
       const res2 = await myclient.logout();
-      expect(res2.status).toBe(200);
-      expect(res2.statusText).toBe("OK");
+      expect(res2.status).toBe(204);
+      expect(res2.statusText).toBe("No Content");
 
       // Try to get self again
       try {
@@ -63,9 +63,9 @@ describe("GET /api/v1/users/self", function () {
       expect(res.status).toBe(200);
       expect(res.statusText).toBe("OK");
 
-      expect(res.data.id).exist;
-      expect(res.data.name).toBe("Admin");
-      expect(res.data.email).toBe("admin@admin.com");
+      expect(res.data.item.id).exist;
+      expect(res.data.item.name).toBe("Admin");
+      expect(res.data.item.email).toBe("admin@admin.com");
 
       done();
     } catch (err) {

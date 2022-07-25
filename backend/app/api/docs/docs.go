@@ -264,7 +264,8 @@ const docTemplate = `{
         "/v1/users/login": {
             "post": {
                 "consumes": [
-                    "application/x-www-form-urlencoded"
+                    "application/x-www-form-urlencoded",
+                    "application/json"
                 ],
                 "produces": [
                     "application/json"

@@ -209,6 +209,7 @@ paths:
     post:
       consumes:
       - application/x-www-form-urlencoded
+      - application/json
       parameters:
       - description: string
         example: admin@admin.com

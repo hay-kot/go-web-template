@@ -1,5 +1,9 @@
 import axios, { Axios } from "axios";
 
+interface Wrap<T> {
+  item: T;
+}
+
 interface Status {
   status: string;
   message: string;
@@ -80,14 +84,10 @@ export class v1ApiClient {
   }
 
   async self() {
-    return this.requests.get<UserSelf>(this.v1("/users/self"));
+    return this.requests.get<Wrap<UserSelf>>(this.v1("/users/self"));
   }
 
   async status() {
-    return this.requests.get<Status>(this.api("/status"));
-  }
-
-  async summary() {
-    return this.requests.get<ApiSummary>(this.api(""));
+    return this.requests.get<Wrap<Status>>(this.api("/status"));
   }
 }

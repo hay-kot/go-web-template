@@ -10,10 +10,16 @@ import (
 	"github.com/hay-kot/git-web-template/backend/pkgs/server"
 )
 
+var (
+	HeaderFormData = "application/x-www-form-urlencoded"
+	HeaderJSON     = "application/json"
+)
+
 // HandleAuthLogin godoc
 // @Summary  User Login
 // @Tags     Authentication
 // @Accept   x-www-form-urlencoded
+// @Accept   application/json
 // @Param    username  formData  string  false  "string"  example(admin@admin.com)
 // @Param    password  formData  string  false  "string"  example(admin)
 // @Produce  json
@@ -21,16 +27,28 @@ import (
 // @Router   /v1/users/login [POST]
 func (ctrl *V1Controller) HandleAuthLogin() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		err := r.ParseForm()
+		loginForm := &types.LoginForm{}
 
-		if err != nil {
-			server.Respond(w, http.StatusBadRequest, server.Wrap(err))
+		if r.Header.Get("Content-Type") == HeaderFormData {
+			err := r.ParseForm()
+
+			if err != nil {
+				server.Respond(w, http.StatusBadRequest, server.Wrap(err))
+				return
+			}
+
+			loginForm.Username = r.PostFormValue("username")
+			loginForm.Password = r.PostFormValue("password")
+		} else if r.Header.Get("Content-Type") == HeaderJSON {
+			err := server.Decode(r, loginForm)
+
+			if err != nil {
+				server.Respond(w, http.StatusBadRequest, server.Wrap(err))
+				return
+			}
+		} else {
+			server.Respond(w, http.StatusBadRequest, errors.New("invalid content type"))
 			return
-		}
-
-		loginForm := types.LoginForm{
-			Username: r.PostFormValue("username"),
-			Password: r.PostFormValue("password"),
 		}
 
 		if loginForm.Username == "" || loginForm.Password == "" {
