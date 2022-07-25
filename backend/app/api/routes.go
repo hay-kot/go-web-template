@@ -21,9 +21,9 @@ func (a *app) newRouter(repos *repo.AllRepos) *chi.Mux {
 
 	// =========================================================================
 	// Base Routes
+
 	r.Get("/swagger/*", httpSwagger.Handler(
-		// TODO: Set Dynamically
-		httpSwagger.URL("http://localhost:7745/swagger/doc.json"), //The url pointing to API definition
+		httpSwagger.URL(fmt.Sprintf("%s://%s/swagger/doc.json", a.conf.Swagger.Scheme, a.conf.Swagger.Host)),
 	))
 
 	// Server Favicon

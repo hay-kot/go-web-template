@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/hay-kot/git-web-template/backend/app/api/docs"
 	"github.com/hay-kot/git-web-template/backend/ent"
 	"github.com/hay-kot/git-web-template/backend/internal/config"
 	"github.com/hay-kot/git-web-template/backend/internal/repo"
@@ -21,7 +22,6 @@ import (
 // @description                 This is a simple Rest API Server Template that implements some basic User and Authentication patterns to help you get started and bootstrap your next project!.
 // @contact.name                Don't
 // @license.name                MIT
-// @host                        localhost:7745
 // @BasePath                    /api
 // @securityDefinitions.apikey  Bearer
 // @in                          header
@@ -34,6 +34,9 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	docs.SwaggerInfo.Host = cfg.Swagger.Host
+
 	if err := run(cfg); err != nil {
 		panic(err)
 	}

@@ -58,7 +58,6 @@ definitions:
       name:
         type: string
     type: object
-host: localhost:7745
 info:
   contact:
     name: Don't
