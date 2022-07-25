@@ -14,7 +14,7 @@ func GetTestHandler(t *testing.T) *BaseController {
 
 func TestHandlersv1_HandleBase(t *testing.T) {
 	// Setup
-	hdlrFunc := GetTestHandler(t).HandleBase("v1")
+	hdlrFunc := GetTestHandler(t).HandleBase(func() bool { return true }, "v1")
 
 	// Call Handler Func
 	rr := httptest.NewRecorder()

@@ -23,36 +23,26 @@ func NewBaseController(log *logger.Logger, svr *server.Server) *BaseController {
 	return h
 }
 
-func (ctrl *BaseController) HandleBase(versions ...string) http.HandlerFunc {
+// HandleBase godoc
+// @Summary  Retrieves the basic information about the API
+// @Tags     Base
+// @Produce  json
+// @Success  200  {object}  server.Result{item=types.ApiSummary}
+// @Router   /status [GET]
+func (ctrl *BaseController) HandleBase(ready ReadyFunc, versions ...string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		data := types.ApiSummary{
-			Healthy:  true,
+			Healthy:  ready(),
 			Versions: versions,
 			Title:    "Go API Template",
 			Message:  "Welcome to the Go API Template Application!",
 		}
 
-		err := server.Respond(w, http.StatusOK, data)
+		err := server.Respond(w, http.StatusOK, server.Wrap(data))
 
 		if err != nil {
 			ctrl.log.Error(err, nil)
 			server.RespondInternalServerError(w)
-		}
-	}
-}
-
-func (ctrl *BaseController) HandleReady(ready ReadyFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		if ready() {
-			server.Respond(w, http.StatusOK, server.
-				Wrap("status", "available").
-				Message("The service is ready to use"),
-			)
-		} else {
-			server.Respond(w, http.StatusServiceUnavailable, server.
-				Wrap("status", "unavailable").
-				Message("The service is not ready to use"),
-			)
 		}
 	}
 }
