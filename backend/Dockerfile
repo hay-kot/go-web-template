@@ -12,7 +12,7 @@ RUN go build -o /go/bin/manage -v ./app/cli/*.go
 FROM alpine:latest
 
 RUN apk --no-cache add ca-certificates
-COPY ./config.yml /app/config.yml
+COPY ./config.template.yml /app/config.yml
 COPY --from=builder /go/bin/api /app
 COPY --from=builder /go/bin/manage /bin
 
