@@ -14,7 +14,7 @@ func GetTestHandler(t *testing.T) *BaseController {
 
 func TestHandlersv1_HandleBase(t *testing.T) {
 	// Setup
-	hdlrFunc := GetTestHandler(t).HandleBase("v1")
+	hdlrFunc := GetTestHandler(t).HandleBase(func() bool { return true }, "v1")
 
 	// Call Handler Func
 	rr := httptest.NewRecorder()
@@ -26,7 +26,7 @@ func TestHandlersv1_HandleBase(t *testing.T) {
 	}
 
 	// Validate Json Payload
-	expected := `{"health":true,"versions":["v1"],"title":"Go API Template","message":"Welcome to the Go API Template Application!"}`
+	expected := `{"item":{"health":true,"versions":["v1"],"title":"Go API Template","message":"Welcome to the Go API Template Application!"}}`
 
 	if rr.Body.String() != expected {
 		t.Errorf("Expected json to be %s, got %s", expected, rr.Body.String())

@@ -1,6 +1,8 @@
 package server
 
-import "net/http"
+import (
+	"net/http"
+)
 
 // ErrorBuilder is a helper type to build a response that contains an array of errors.
 // Typical use cases are for returning an array of validation errors back to the user.
@@ -45,8 +47,5 @@ func (eb *ErrorBuilder) AddError(err error) {
 // Respond sends a JSON response with the ErrorBuilder's errors. If there are no errors, then
 // the errors field will be an empty array.
 func (eb *ErrorBuilder) Respond(w http.ResponseWriter, statusCode int) {
-	Respond(w, statusCode, Wrap("errors", eb.errs).
-		Add("message", http.StatusText(statusCode)).
-		Add("status", statusCode),
-	)
+	Respond(w, statusCode, Wrap(nil).AddError(http.StatusText(statusCode), eb.errs))
 }

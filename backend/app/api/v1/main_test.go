@@ -23,7 +23,7 @@ func userPool() func() {
 	userOut := []types.UserOut{}
 
 	for _, user := range create {
-		usrOut, _ := mockHandler.svc.Admin.Create(context.Background(), &user)
+		usrOut, _ := mockHandler.svc.Admin.Create(context.Background(), user)
 		userOut = append(userOut, usrOut)
 	}
 

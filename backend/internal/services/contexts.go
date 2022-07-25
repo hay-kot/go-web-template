@@ -15,24 +15,24 @@ var (
 	ContextUserToken = &contextKeys{name: "UserToken"}
 )
 
-// SetUserContext is a helper function that sets the ContextUser and ContextUserToken
+// SetUserCtx is a helper function that sets the ContextUser and ContextUserToken
 // values within the context of a web request (or any context).
-func SetUserContext(ctx context.Context, user *types.UserOut, token string) context.Context {
+func SetUserCtx(ctx context.Context, user *types.UserOut, token string) context.Context {
 	ctx = context.WithValue(ctx, ContextUser, user)
 	ctx = context.WithValue(ctx, ContextUserToken, token)
 	return ctx
 }
 
-// UseUserContext is a helper function that returns the user from the context.
-func UseUserContext(ctx context.Context) *types.UserOut {
+// UseUserCtx is a helper function that returns the user from the context.
+func UseUserCtx(ctx context.Context) *types.UserOut {
 	if val := ctx.Value(ContextUser); val != nil {
 		return val.(*types.UserOut)
 	}
 	return nil
 }
 
-// UseTokenContext is a helper function that returns the user token from the context.
-func UseTokenContext(ctx context.Context) string {
+// UseTokenCtx is a helper function that returns the user token from the context.
+func UseTokenCtx(ctx context.Context) string {
 	if val := ctx.Value(ContextUserToken); val != nil {
 		return val.(string)
 	}

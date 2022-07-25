@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/hay-kot/git-web-template/backend/app/api/docs"
 	"github.com/hay-kot/git-web-template/backend/ent"
 	"github.com/hay-kot/git-web-template/backend/internal/config"
 	"github.com/hay-kot/git-web-template/backend/internal/repo"
@@ -16,6 +17,16 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+// @title                       Go API Templates
+// @version                     1.0
+// @description                 This is a simple Rest API Server Template that implements some basic User and Authentication patterns to help you get started and bootstrap your next project!.
+// @contact.name                Don't
+// @license.name                MIT
+// @BasePath                    /api
+// @securityDefinitions.apikey  Bearer
+// @in                          header
+// @name                        Authorization
+// @description                 "Type 'Bearer TOKEN' to correctly set the API Key"
 func main() {
 	cfgFile := "config.yml"
 
@@ -23,6 +34,9 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	docs.SwaggerInfo.Host = cfg.Swagger.Host
+
 	if err := run(cfg); err != nil {
 		panic(err)
 	}

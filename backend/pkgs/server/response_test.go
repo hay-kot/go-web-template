@@ -46,7 +46,7 @@ func Test_RespondError(t *testing.T) {
 	RespondError(recorder, http.StatusBadRequest, customError)
 
 	assert.Equal(t, http.StatusBadRequest, recorder.Code)
-	assert.JSONEq(t, recorder.Body.String(), `{"errors":["custom error"], "message":"Bad Request", "status":400}`)
+	assert.JSONEq(t, recorder.Body.String(), `{"details":["custom error"], "message":"Bad Request", "error":true}`)
 
 }
 func Test_RespondInternalServerError(t *testing.T) {
@@ -55,7 +55,7 @@ func Test_RespondInternalServerError(t *testing.T) {
 	RespondInternalServerError(recorder)
 
 	assert.Equal(t, http.StatusInternalServerError, recorder.Code)
-	assert.JSONEq(t, recorder.Body.String(), `{"errors":["internal server error"], "message":"Internal Server Error", "status":500}`)
+	assert.JSONEq(t, recorder.Body.String(), `{"details":["internal server error"], "message":"Internal Server Error", "error":true}`)
 
 }
 func Test_RespondUnauthorized(t *testing.T) {
@@ -64,7 +64,7 @@ func Test_RespondUnauthorized(t *testing.T) {
 	RespondUnauthorized(recorder)
 
 	assert.Equal(t, http.StatusUnauthorized, recorder.Code)
-	assert.JSONEq(t, recorder.Body.String(), `{"errors":["unauthorized"], "message":"Unauthorized", "status":401}`)
+	assert.JSONEq(t, recorder.Body.String(), `{"details":["unauthorized"], "message":"Unauthorized", "error":true}`)
 
 }
 func Test_RespondForbidden(t *testing.T) {
@@ -73,6 +73,6 @@ func Test_RespondForbidden(t *testing.T) {
 	RespondForbidden(recorder)
 
 	assert.Equal(t, http.StatusForbidden, recorder.Code)
-	assert.JSONEq(t, recorder.Body.String(), `{"errors":["forbidden"], "message":"Forbidden", "status":403}`)
+	assert.JSONEq(t, recorder.Body.String(), `{"details":["forbidden"], "message":"Forbidden", "error":true}`)
 
 }

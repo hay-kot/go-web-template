@@ -92,13 +92,13 @@ func Test_ErrorBuilder_Respond(t *testing.T) {
 	// Check errors payload is correct
 
 	errorsStruct := struct {
-		Errors  []string `json:"errors"`
+		Errors  []string `json:"details"`
 		Message string   `json:"message"`
-		Status  int      `json:"status"`
+		Error   bool     `json:"error"`
 	}{
 		Errors:  ebList.errs,
 		Message: http.StatusText(http.StatusUnprocessableEntity),
-		Status:  422,
+		Error:   true,
 	}
 
 	asJson, _ := json.Marshal(errorsStruct)

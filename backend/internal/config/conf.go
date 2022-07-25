@@ -18,12 +18,18 @@ const (
 )
 
 type Config struct {
-	Mode     string     `yaml:"mode" conf:"default:development"` // development or production
-	Web      WebConfig  `yaml:"web"`
-	Database Database   `yaml:"database"`
-	Log      LoggerConf `yaml:"logger"`
-	Mailer   MailerConf `yaml:"mailer"`
-	Seed     Seed       `yaml:"seed"`
+	Mode     string      `yaml:"mode" conf:"default:development"` // development or production
+	Web      WebConfig   `yaml:"web"`
+	Database Database    `yaml:"database"`
+	Log      LoggerConf  `yaml:"logger"`
+	Mailer   MailerConf  `yaml:"mailer"`
+	Seed     Seed        `yaml:"seed"`
+	Swagger  SwaggerConf `yaml:"swagger"`
+}
+
+type SwaggerConf struct {
+	Host   string `yaml:"host" conf:"default:localhost:7745"`
+	Scheme string `yaml:"scheme" conf:"default:http"`
 }
 
 type WebConfig struct {

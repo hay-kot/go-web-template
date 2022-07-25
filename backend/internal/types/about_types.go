@@ -1,6 +1,6 @@
 package types
 
-// ApiSummar
+// ApiSummary
 //
 // @public
 type ApiSummary struct {

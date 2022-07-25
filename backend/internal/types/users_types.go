@@ -53,7 +53,6 @@ func (usr *UserOut) IsNull() bool {
 }
 
 type UserUpdate struct {
-	ID    uuid.UUID `json:"id"`
-	Name  string    `json:"name"`
-	Email string    `json:"email"`
+	Name  *string `json:"name"`
+	Email *string `json:"email"`
 }
