@@ -23,11 +23,11 @@ const (
 )
 
 type usersResponse struct {
-	Users []types.UserOut `json:"users"`
+	Users []types.UserOut `json:"item"`
 }
 
 type userResponse struct {
-	User types.UserOut `json:"user"`
+	User types.UserOut `json:"item"`
 }
 
 func Test_HandleAdminUserGetAll_Success(t *testing.T) {
