@@ -1,0 +1,30 @@
+# This is an example .goreleaser.yml file with some sensible defaults.
+# Make sure to check the documentation at https://goreleaser.com
+before:
+  hooks:
+    # You may remove this if you don't use go modules.
+    - go mod tidy
+    # you may remove this if you don't need go generate
+    - go generate ./...
+dockers:
+  - image_templates:
+      - "gcr.io/hay-kot/go-web-template:latest"
+      - "gcr.io/hay-kot/go-web-template:{{ .Tag }}"
+builds:
+  - env:
+      - CGO_ENABLED=1
+    goos:
+      - linux
+archives:
+  - replacements:
+      linux: Linux
+checksum:
+  name_template: "checksums.txt"
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
